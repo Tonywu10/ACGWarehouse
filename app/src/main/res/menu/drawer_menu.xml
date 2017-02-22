@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/group1">
+        <item
+            android:id="@+id/home"
+            android:title="@string/homePage"
+            android:icon="@drawable/ic_live_tv_black_24dp">
+        </item>
+    </group>
+    <group android:id="@+id/group3">
+        <item
+            android:id="@+id/collect"
+            android:title="@string/myCollection"
+            android:icon="@drawable/ic_star_border_black_24dp">
+        </item>
+    </group>
+    <group android:id="@+id/group4">
+        <item
+            android:id="@+id/about"
+            android:title="@string/about"
+            android:icon="@drawable/ic_settings_black_24dp">
+        </item>
+    </group>
+    <group android:id="@+id/group5">
+        <item
+            android:id="@+id/logout"
+            android:title="@string/logout"
+            android:icon="@drawable/ic_power_settings_new_black_24dp">
+        </item>
+    </group>
+</menu>

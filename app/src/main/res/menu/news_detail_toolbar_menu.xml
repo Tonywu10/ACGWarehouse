@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/news_detail_collect"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:icon="@drawable/ic_star_border_black_24dp"
+        android:orderInCategory="90"
+        android:title="@string/collect"
+        app:showAsAction="ifRoom|collapseActionView"/>
+</menu>

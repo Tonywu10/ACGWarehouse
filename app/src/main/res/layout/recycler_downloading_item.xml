@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:padding="16dp">
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_weight="0.3"
+        android:id="@+id/downloadingThumb"
+        android:src="@drawable/whale"/>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_weight="0.7"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="文件标题"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:id="@+id/downloadingTitle"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:id="@+id/downloadingType"
+            android:gravity="bottom"
+            android:text="文件类型"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <ProgressBar
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.6"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:id="@+id/downloadingProgressbar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:max="100"
+                android:progress="30"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"
+                android:id="@+id/downloadingSize"
+                android:gravity="center"
+                android:text="30"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
