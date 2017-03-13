@@ -35,7 +35,7 @@ public class CollectComicFragment extends Fragment{
         mRecyclerView.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager=new GridLayoutManager(view.getContext(),DEFAULT_SPAN_COUNT);
         mRecyclerView.setLayoutManager(gridLayoutManager);
-        mCollectComicAdapter =new CollectComicAdapter(entityData,gridLayoutManager,DEFAULT_SPAN_COUNT);
+        mCollectComicAdapter =new CollectComicAdapter(entityData);
         mRecyclerView.setAdapter(mCollectComicAdapter);
         getData();
         return view;

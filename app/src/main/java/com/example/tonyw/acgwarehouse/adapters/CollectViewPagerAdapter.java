@@ -10,12 +10,8 @@ import com.example.tonyw.acgwarehouse.fragments.CollectNewsFragment;
 
 import java.util.ArrayList;
 
-/**
- * Created by tonywu10 on 2016/12/12.
- */
-
 public class CollectViewPagerAdapter extends FragmentStatePagerAdapter{
-    ArrayList<String> titleContainer=new ArrayList<>();
+    private ArrayList<String> titleContainer=new ArrayList<>();
     public CollectViewPagerAdapter(FragmentManager fm) {
         super(fm);
     }

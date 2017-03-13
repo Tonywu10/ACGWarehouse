@@ -1,7 +1,7 @@
 package com.example.tonyw.acgwarehouse.adapters;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,23 +10,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.tonyw.acgwarehouse.R;
-import com.example.tonyw.acgwarehouse.activity.CollectActivity;
 import com.example.tonyw.acgwarehouse.activity.NewsDetailActivity;
 import com.example.tonyw.acgwarehouse.utils.BaseHolder;
 import com.example.tonyw.acgwarehouse.utils.Entity;
 
 import java.util.List;
 
-/**
- * Created by tonywu10 on 2016/12/13.
- */
-
 public class CollectNewsAdapter extends RecyclerView.Adapter<BaseHolder>{
     private List<Entity> mEntityList;
     private View view;
-    public CollectNewsAdapter(List<Entity> entityList, LinearLayoutManager linearLayoutManager)
+    private Activity mCollectActivity;
+    public CollectNewsAdapter(List<Entity> entityList,Activity context)
     {
         mEntityList=entityList;
+        mCollectActivity=context;
     }
 
     @Override
@@ -36,7 +33,7 @@ public class CollectNewsAdapter extends RecyclerView.Adapter<BaseHolder>{
     }
 
     @Override
-    public void onBindViewHolder(BaseHolder holder, final int position) {
+    public void onBindViewHolder(final BaseHolder holder, int position) {
         ImageView collectNewsThumb= (ImageView) holder.itemView.findViewById(R.id.collectNewsThumb);
         TextView collectNewsTitle= (TextView) holder.itemView.findViewById(R.id.collectNewsTitle);
         TextView collectNewsSource= (TextView) holder.itemView.findViewById(R.id.collectNewsSource);
@@ -48,10 +45,10 @@ public class CollectNewsAdapter extends RecyclerView.Adapter<BaseHolder>{
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent it=new Intent(CollectActivity.collectActivity, NewsDetailActivity.class);
-                it.putExtra("news_url",mEntityList.get(position).getNewsUrl());
-                it.putExtra("NewsTitle",mEntityList.get(position).getNewsTitle());
-                CollectActivity.collectActivity.startActivity(it);
+                Intent it=new Intent(mCollectActivity, NewsDetailActivity.class);
+                it.putExtra("news_url",mEntityList.get(holder.getAdapterPosition()).getNewsUrl());
+                it.putExtra("NewsTitle",mEntityList.get(holder.getAdapterPosition()).getNewsTitle());
+                mCollectActivity.startActivity(it);
             }
         });
     }

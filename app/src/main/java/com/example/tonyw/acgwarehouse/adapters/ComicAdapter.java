@@ -14,10 +14,6 @@ import com.example.tonyw.acgwarehouse.utils.BaseHolder;
 
 import java.util.List;
 
-/**
- * Created by tonywu10 on 2016/12/9.
- */
-
 public class ComicAdapter extends RecyclerView.Adapter<BaseHolder>{
     private int mDefaultSpanCount;
     private List<Entity> mEntityList;
@@ -34,7 +30,7 @@ public class ComicAdapter extends RecyclerView.Adapter<BaseHolder>{
     }
 
     private boolean isCategoryType(int position) {
-        return mEntityList.get(position).getItemType()== Entity.CATEGORY_ITEM_TYPE?true:false;
+        return mEntityList.get(position).getItemType()== Entity.CATEGORY_ITEM_TYPE;
     }
 
     @Override

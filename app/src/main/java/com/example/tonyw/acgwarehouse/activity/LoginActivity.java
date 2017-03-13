@@ -12,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,18 +27,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import static com.example.tonyw.acgwarehouse.R.id.userPassword;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.CHECK_PASS;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getHttpBitmap;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getJsonData;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.getPasswordMD5;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
 
 /**
- * Created by tonywu10 on 2016/11/28.
+ * 登录模块
  */
 
 public class LoginActivity extends AppCompatActivity{
-    public static final int CHECK_PASS=100;
-
     Button regButton;
     Button loginButton;
     EditText loginUserName;
@@ -71,7 +69,6 @@ public class LoginActivity extends AppCompatActivity{
                             it.putExtra("bitmap",bitmapByte);
                             it.putExtra("userName",userName);
                             sendBroadcast(it);
-                            Log.d("send","broad");
                             baos.close();
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -87,6 +84,7 @@ public class LoginActivity extends AppCompatActivity{
             }
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,7 +112,7 @@ public class LoginActivity extends AppCompatActivity{
                 if(s.length()>0)
                 {
                     isLoginUserName=true;
-                    if(isLoginUserPassword&&isLoginUserName)
+                    if(isLoginUserPassword)
                     {
                         loginButton.setEnabled(true);
                         loginButton.setTextColor(Color.BLACK);
@@ -144,7 +142,7 @@ public class LoginActivity extends AppCompatActivity{
                 if(s.length()>0)
                 {
                     isLoginUserPassword=true;
-                    if(isLoginUserPassword&&isLoginUserName)
+                    if(isLoginUserName)
                     {
                         loginButton.setEnabled(true);
                         loginButton.setTextColor(Color.BLACK);
@@ -185,7 +183,8 @@ public class LoginActivity extends AppCompatActivity{
         });
     }
 
-    public class CheckUserValidate implements Runnable{
+    //用于检查用户身份
+    private class CheckUserValidate implements Runnable{
         @Override
         public void run() {
             String name=loginUserName.getText().toString();
@@ -199,9 +198,8 @@ public class LoginActivity extends AppCompatActivity{
                     JSONObject jsonObject=jsonArray.getJSONObject(i);
                     if(jsonObject.getInt("exist")==1)
                     {
-                        Log.d("exist","in");
                         isValidate=true;
-                        userAvatarBitmap=getHttpBitmap("http://tonywu10.imwork.net:16284/ACGWarehouse/img/"+jsonObject.getString("userAvatar")+".jpg");
+                        userAvatarBitmap=getHttpBitmap("http://tonywu10.imwork.net:16284/ACGWarehouse/img"+jsonObject.getString("userAvatar")+".jpg");
                         userName=jsonObject.getString("userName");
                     }
                     else

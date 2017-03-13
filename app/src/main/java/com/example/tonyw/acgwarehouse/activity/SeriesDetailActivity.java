@@ -29,7 +29,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.tonyw.acgwarehouse.activity.NewsDetailActivity.IS_FINISH;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.IS_FINISH;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getJsonData;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
 
@@ -89,7 +89,7 @@ public class SeriesDetailActivity extends AppCompatActivity{
         mRecyclerView.setLayoutManager(gridLayoutManager);
         new getJson().start();
         mCollapsingToolbarLayout.setExpandedTitleColor(Color.WHITE);
-        mSeriesDetailAdapter =new SeriesDetailAdapter(entityData,gridLayoutManager,DEFAULT_SPAN_COUNT);
+        mSeriesDetailAdapter =new SeriesDetailAdapter(entityData,DEFAULT_SPAN_COUNT,this);
         mToolbar= (Toolbar) findViewById(R.id.series_detail_toolbar);
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {

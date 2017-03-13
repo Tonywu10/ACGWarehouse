@@ -28,32 +28,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.IS_FINISH;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.NO_DATA_GET;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.NO_NETWORK;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.REFRESH_COMPLETE;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getHttpBitmap;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.isNetworkConnected;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
 
-/**
- * Created by tonywu10 on 2016/11/28.
- */
-
 public class AnimateFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     private static final int DEFAULT_SPAN_COUNT=2;
-    private static final int REFRESH_COMPLETE=100;
-    private static final int IS_FINISH=101;
-    public static final int IS_CACHED=102;
-    private static final int NO_NETWORK=103;
-    private static final int NO_DATA_GET=104;
-
-    private RecyclerView mRecyclerView;
     private AnimateAdapter mAnimateAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-
     private List<Entity> entityData=new ArrayList<>();
     private List<VideoEntity> mPreVideoEntities=new ArrayList<>();
     private VideoEntity mPreVideoEntity;
     private List<VideoEntity> mDownloadVideoEntities=new ArrayList<>();
     private List<VideoEntity> mRefreshVideoEntities=new ArrayList<>();
-    private VideoEntity mRefreshVideoEntity;
 
     private String jsonString;
     private String path="http://tonywu10.imwork.net:16284/ACGWarehouse/VideoDemo";
@@ -78,10 +69,6 @@ public class AnimateFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     mAnimateAdapter.notifyDataSetChanged();
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
-                case IS_CACHED:
-                    mAnimateAdapter.notifyDataSetChanged();
-                    mSwipeRefreshLayout.setRefreshing(false);
-                    break;
                 case NO_NETWORK:
                     Log.d("no_network","I'm in");
                     Toast.makeText(getActivity().getApplicationContext(),"network is down",Toast.LENGTH_SHORT).show();
@@ -101,7 +88,7 @@ public class AnimateFragment extends Fragment implements SwipeRefreshLayout.OnRe
                              Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_animate, container, false);
-        mRecyclerView= (RecyclerView) view.findViewById(R.id.animate_recyclerview);
+        RecyclerView mRecyclerView= (RecyclerView) view.findViewById(R.id.animate_recyclerview);
         mRecyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
         mRecyclerView.setHasFixedSize(true);
         mSwipeRefreshLayout= (SwipeRefreshLayout) view.findViewById(R.id.animate_swipeRefresh);
@@ -116,7 +103,7 @@ public class AnimateFragment extends Fragment implements SwipeRefreshLayout.OnRe
         setDownloadData();
         final GridLayoutManager gridLayoutManager=new GridLayoutManager(view.getContext(),DEFAULT_SPAN_COUNT);
         mRecyclerView.setLayoutManager(gridLayoutManager);
-        mAnimateAdapter =new AnimateAdapter(entityData,gridLayoutManager,DEFAULT_SPAN_COUNT);
+        mAnimateAdapter =new AnimateAdapter(entityData,gridLayoutManager,DEFAULT_SPAN_COUNT,getActivity());
         mRecyclerView.setAdapter(mAnimateAdapter);
         return view;
     }
@@ -164,7 +151,7 @@ public class AnimateFragment extends Fragment implements SwipeRefreshLayout.OnRe
         new Thread(new refreshVideoInfo()).start();
     }
 
-    public class downloadVideoInfo implements Runnable{
+    private class downloadVideoInfo implements Runnable{
         @Override
         public void run() {
             jsonString= HttpUtils.getJsonContent(path);
@@ -196,7 +183,7 @@ public class AnimateFragment extends Fragment implements SwipeRefreshLayout.OnRe
         }
     }
 
-    public class refreshVideoInfo implements Runnable{
+    private class refreshVideoInfo implements Runnable{
         @Override
         public void run() {
             jsonString= HttpUtils.getJsonContent(path);
@@ -293,6 +280,7 @@ public class AnimateFragment extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
     public void setEntitiesDataFromJson(List<VideoEntity> mEntities,JSONArray jsonArray,List<Integer> randList) throws JSONException {
+        VideoEntity mRefreshVideoEntity;
         for (int i=0;i<randList.size();i++)
         {
             JSONObject jsonObject = jsonArray.getJSONObject(randList.get(i));

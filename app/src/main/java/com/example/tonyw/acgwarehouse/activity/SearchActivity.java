@@ -26,6 +26,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.IS_FINISH;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.NO_DATA_GET;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.NO_NETWORK;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.NO_RESULT;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getHttpBitmap;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getJsonData;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.isNetworkConnected;
@@ -37,11 +41,6 @@ import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
  */
 
 public class SearchActivity extends AppCompatActivity{
-    private static final int NO_RESULT=100;
-    private static final int IS_FINISH=101;
-    private static final int NO_NETWORK=103;
-    private static final int NO_DATA_GET=104;
-
     private Toolbar mToolbar;
     public static final int DEFAULT_SPAN_COUNT=2;
     public static Activity searchActivity;
@@ -102,7 +101,7 @@ public class SearchActivity extends AppCompatActivity{
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
         mRecyclerView.setHasFixedSize(true);
-        mSearchAdapter =new SearchAdapter(entityData,gridLayoutManager,DEFAULT_SPAN_COUNT);
+        mSearchAdapter =new SearchAdapter(entityData,DEFAULT_SPAN_COUNT,this);
         mRecyclerView.setAdapter(mSearchAdapter);
         mSwipeRefreshLayout= (SwipeRefreshLayout) findViewById(R.id.search_swipeRefresh);
         mSwipeRefreshLayout.post(new Runnable() {

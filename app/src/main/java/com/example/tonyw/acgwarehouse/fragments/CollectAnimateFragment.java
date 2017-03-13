@@ -16,13 +16,8 @@ import com.example.tonyw.acgwarehouse.utils.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by tonywu10 on 2016/12/12.
- */
-
 public class CollectAnimateFragment extends Fragment{
     public static final int DEFAULT_SPAN_COUNT=2;
-    private RecyclerView mRecyclerView;
     private List<Entity> entityData=new ArrayList<>();
     private CollectAnimateAdapter mCollectAnimateAdapter;
     @Override
@@ -30,12 +25,13 @@ public class CollectAnimateFragment extends Fragment{
                              Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_collect_animate, container, false);
+        RecyclerView mRecyclerView;
         mRecyclerView= (RecyclerView) view.findViewById(R.id.collect_animate_recyclerview);
         mRecyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
         mRecyclerView.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager=new GridLayoutManager(view.getContext(),DEFAULT_SPAN_COUNT);
         mRecyclerView.setLayoutManager(gridLayoutManager);
-        mCollectAnimateAdapter =new CollectAnimateAdapter(entityData,gridLayoutManager,DEFAULT_SPAN_COUNT);
+        mCollectAnimateAdapter =new CollectAnimateAdapter(entityData);
         mRecyclerView.setAdapter(mCollectAnimateAdapter);
         getData();
         return view;

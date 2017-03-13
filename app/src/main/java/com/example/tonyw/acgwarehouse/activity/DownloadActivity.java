@@ -11,29 +11,17 @@ import android.view.View;
 import com.example.tonyw.acgwarehouse.R;
 import com.example.tonyw.acgwarehouse.adapters.DownloadViewPagerAdapter;
 
-
-/**
- * Created by tonywu10 on 2016/12/10.
- */
-
 public class DownloadActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download);
-
-        ViewPager mViewPager;
-        TabLayout mTabLayout;
-        Toolbar mToolbar;
-
-        mViewPager= (ViewPager) findViewById(R.id.vp);
-        mTabLayout= (TabLayout) findViewById(R.id.tl);
-        mToolbar= (Toolbar) findViewById(R.id.download_toolbar);
-
+        ViewPager mViewPager= (ViewPager) findViewById(R.id.vp);
+        TabLayout mTabLayout= (TabLayout) findViewById(R.id.tl);
+        Toolbar mToolbar= (Toolbar) findViewById(R.id.download_toolbar);
         DownloadViewPagerAdapter adapter=new DownloadViewPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mViewPager);
-
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

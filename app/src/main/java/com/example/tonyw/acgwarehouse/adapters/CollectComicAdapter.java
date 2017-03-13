@@ -1,6 +1,5 @@
 package com.example.tonyw.acgwarehouse.adapters;
 
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.tonyw.acgwarehouse.R;
-import com.example.tonyw.acgwarehouse.utils.Entity;
 import com.example.tonyw.acgwarehouse.utils.BaseHolder;
+import com.example.tonyw.acgwarehouse.utils.Entity;
 
 import java.util.List;
 
@@ -20,11 +19,9 @@ import java.util.List;
 
 public class CollectComicAdapter extends RecyclerView.Adapter<BaseHolder>{
     private List<Entity> mEntityList;
-    private int mDefaultSpanCount;
-    public CollectComicAdapter(List<Entity> entityList, GridLayoutManager gridLayoutManager,int defaultSpanCount)
+    public CollectComicAdapter(List<Entity> entityList)
     {
         mEntityList=entityList;
-        mDefaultSpanCount=defaultSpanCount;
     }
 
     @Override
@@ -43,7 +40,7 @@ public class CollectComicAdapter extends RecyclerView.Adapter<BaseHolder>{
         collectComicThumb.setImageResource(mEntityList.get(position).getCollectThumb());
         collectComicTitle.setText(mEntityList.get(position).getCollectTitle());
         collectNewEpisode.setText(String.valueOf(mEntityList.get(position).getCollectNewEpisode()));
-        if(mEntityList.get(position).collectIsUpdate()==true)
+        if(mEntityList.get(position).collectIsUpdate())
         {
             isComicUpdate.setText("有更新");
         }

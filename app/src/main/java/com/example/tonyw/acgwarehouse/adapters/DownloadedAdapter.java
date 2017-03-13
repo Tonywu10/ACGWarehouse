@@ -1,6 +1,5 @@
 package com.example.tonyw.acgwarehouse.adapters;
 
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,18 +8,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.tonyw.acgwarehouse.R;
-import com.example.tonyw.acgwarehouse.utils.Entity;
 import com.example.tonyw.acgwarehouse.utils.BaseHolder;
+import com.example.tonyw.acgwarehouse.utils.Entity;
 
 import java.util.List;
 
-/**
- * Created by tonywu10 on 2016/12/10.
- */
-
 public class DownloadedAdapter extends RecyclerView.Adapter<BaseHolder> {
     private List<Entity> mEntityList;
-    public DownloadedAdapter(List<Entity> entityList, LinearLayoutManager linearLayoutManager)
+    public DownloadedAdapter(List<Entity> entityList)
     {
         mEntityList=entityList;
     }

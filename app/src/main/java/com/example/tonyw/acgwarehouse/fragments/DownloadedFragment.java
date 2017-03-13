@@ -16,10 +16,6 @@ import com.example.tonyw.acgwarehouse.utils.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by tonywu10 on 2016/12/10.
- */
-
 public class DownloadedFragment extends Fragment{
     private RecyclerView mRecyclerView;
     private List<Entity> entityData=new ArrayList<>();
@@ -34,7 +30,7 @@ public class DownloadedFragment extends Fragment{
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(view.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mDownloadedAdapter =new DownloadedAdapter(entityData,linearLayoutManager);
+        mDownloadedAdapter =new DownloadedAdapter(entityData);
         mRecyclerView.setAdapter(mDownloadedAdapter);
         getData();
         return view;

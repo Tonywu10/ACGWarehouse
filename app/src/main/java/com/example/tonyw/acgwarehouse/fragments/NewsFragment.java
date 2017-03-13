@@ -26,37 +26,25 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.IS_FINISH;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.LOAD_MORE_DATA;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.NO_DATA_GET;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.NO_NETWORK;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.REFRESH_COMPLETE;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getHttpBitmap;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getJsonData;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.isNetworkConnected;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
 
-/**
- * Created by tonywu10 on 2016/11/28.
- */
-
 public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
-    private static final int REFRESH_COMPLETE=100;
-    private static final int IS_FINISH=101;
-    public static final int LOAD_MORE_DATA=102;
-    private static final int NO_NETWORK=103;
-    private static final int NO_DATA_GET=104;
-
     private boolean isLoadingMore = true;
-
-    private RecyclerView mRecyclerView;
     private NewsAdapter mNewsAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private List<Entity> entityData=new ArrayList<>();
     private List<NewsEntity> mPreNewsEntities=new ArrayList<>();
-    private NewsEntity mPreNewsEntity;
     private List<NewsEntity> mDownloadNewsEntities=new ArrayList<>();
     private List<NewsEntity> mRefreshNewsEntities=new ArrayList<>();
-    private NewsEntity mRefreshNewsEntity;
-
-    private String jsonString;
-    private String path="http://tonywu10.imwork.net:16284/ACGWarehouse/NewsDemo";
 
     private Handler mHandler=new Handler()
     {
@@ -121,6 +109,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                              Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_news, container, false);
+        RecyclerView mRecyclerView;
         mRecyclerView= (RecyclerView) view.findViewById(R.id.news_recyclerview);
         mRecyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
         mRecyclerView.setHasFixedSize(true);
@@ -134,7 +123,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         });
         final LinearLayoutManager linearLayoutManager=new LinearLayoutManager(view.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mNewsAdapter =new NewsAdapter(entityData,linearLayoutManager);
+        mNewsAdapter =new NewsAdapter(entityData,getActivity());
         mRecyclerView.setAdapter(mNewsAdapter);
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -190,7 +179,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         new Thread(new refreshNewsInfo()).start();
     }
 
-    public class loadNewsInfo implements Runnable
+    private class loadNewsInfo implements Runnable
     {
         @Override
         public void run() {
@@ -216,9 +205,11 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }
     }
 
-    public class downloadNewsInfo implements Runnable{
+    private class downloadNewsInfo implements Runnable{
         @Override
         public void run() {
+            String path="http://tonywu10.imwork.net:16284/ACGWarehouse/NewsDemo";
+            String jsonString;
             jsonString= HttpUtils.getJsonContent(path);
             Log.d("TAG",jsonString);
             try {
@@ -245,7 +236,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }
     }
 
-    public class refreshNewsInfo implements Runnable{
+    private class refreshNewsInfo implements Runnable{
         @Override
         public void run() {
             try {
@@ -327,6 +318,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     public void initDynamicPreViewData()
     {
+        NewsEntity mPreNewsEntity;
         for (int i=0;i<mDownloadNewsEntities.size();i++)
         {
             mPreNewsEntity=new NewsEntity();
@@ -336,6 +328,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     public void setEntitiesDataFromJson(List<NewsEntity> mEntities,JSONArray jsonArray,List<Integer> randList) throws JSONException {
+        NewsEntity mRefreshNewsEntity;
         for (int i=0;i<jsonArray.length();i++)
         {
             JSONObject jsonObject = jsonArray.getJSONObject(randList.get(i));

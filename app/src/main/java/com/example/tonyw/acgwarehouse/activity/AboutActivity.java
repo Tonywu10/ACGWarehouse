@@ -7,18 +7,16 @@ import android.view.View;
 
 import com.example.tonyw.acgwarehouse.R;
 
-
 /**
- * Created by tonywu10 on 2016/12/11.
+ * 此文件为"关于应用"部分
  */
 
 public class AboutActivity extends AppCompatActivity{
-    private Toolbar mToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
-        mToolbar= (Toolbar) findViewById(R.id.about_toolbar);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.about_toolbar);
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

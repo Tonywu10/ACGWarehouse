@@ -25,10 +25,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-/**
- * Created by tonyw on 2017/1/3.
- */
-
 public class HttpUtils {
     public HttpUtils() {
                  // TODO Auto-generated constructor stub
@@ -58,7 +54,7 @@ public class HttpUtils {
         // TODO Auto-generated method stub
         String jsonString = "";
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        int len = 0;
+        int len;
         byte[] data = new byte[1024];
         try {
             while ((len = inputStream.read(data)) != -1)

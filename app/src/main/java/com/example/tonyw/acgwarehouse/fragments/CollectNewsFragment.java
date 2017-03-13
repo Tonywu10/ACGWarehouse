@@ -27,22 +27,18 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.IS_FINISH;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.NO_DATA_GET;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.NO_NETWORK;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getHttpBitmap;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.isNetworkConnected;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
-
-/**
- * Created by tonywu10 on 2016/12/12.
- */
 
 public class CollectNewsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     private RecyclerView mRecyclerView;
     private List<Entity> entityData=new ArrayList<>();
     private CollectNewsAdapter mCollectNewsAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    public static final int NO_NETWORK=100;
-    public static final int NO_DATA_GET=101;
-    public static final int IS_FINISH=102;
     private String jsonString;
     private List<NewsEntity> mPreNewsCollectEntities=new ArrayList<>();
     private NewsEntity mPreNewsCollectEntity;
@@ -94,7 +90,7 @@ public class CollectNewsFragment extends Fragment implements SwipeRefreshLayout.
         });
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(view.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mCollectNewsAdapter =new CollectNewsAdapter(entityData,linearLayoutManager);
+        mCollectNewsAdapter =new CollectNewsAdapter(entityData,getActivity());
         mRecyclerView.setAdapter(mCollectNewsAdapter);
         mUserEntity= (UserEntity) getActivity().getApplication();
         return view;
@@ -139,7 +135,7 @@ public class CollectNewsFragment extends Fragment implements SwipeRefreshLayout.
         }
     }
 
-    public class downloadNewsCollectInfo implements Runnable
+    private class downloadNewsCollectInfo implements Runnable
     {
         @Override
         public void run() {

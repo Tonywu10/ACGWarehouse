@@ -33,6 +33,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import static com.example.tonyw.acgwarehouse.activity.LoginActivity.loginActivity;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.SAME_NAME;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.UPLOAD_FINISH;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getJsonData;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.sendUserData;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.getPasswordMD5;
@@ -43,8 +45,6 @@ import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
  */
 
 public class RegisterActivity extends AppCompatActivity{
-    public static final int UPLOAD_FINISH=100;
-    public static final int SAME_NAME=102;
     public String checkName="";
 
     Thread checkNameThread;

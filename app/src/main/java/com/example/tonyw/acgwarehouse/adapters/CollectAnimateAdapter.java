@@ -1,6 +1,5 @@
 package com.example.tonyw.acgwarehouse.adapters;
 
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,22 +8,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.tonyw.acgwarehouse.R;
-import com.example.tonyw.acgwarehouse.utils.Entity;
 import com.example.tonyw.acgwarehouse.utils.BaseHolder;
+import com.example.tonyw.acgwarehouse.utils.Entity;
 
 import java.util.List;
 
-/**
- * Created by tonywu10 on 2016/12/13.
- */
-
 public class CollectAnimateAdapter extends RecyclerView.Adapter<BaseHolder>{
     private List<Entity> mEntityList;
-    private int mDefaultSpanCount;
-    public CollectAnimateAdapter(List<Entity> entityList, GridLayoutManager gridLayoutManager,int defaultSpanCount)
+    public CollectAnimateAdapter(List<Entity> entityList)
     {
         mEntityList=entityList;
-        mDefaultSpanCount=defaultSpanCount;
     }
 
     @Override
@@ -43,7 +36,7 @@ public class CollectAnimateAdapter extends RecyclerView.Adapter<BaseHolder>{
         collectVideoThumb.setImageResource(mEntityList.get(position).getCollectThumb());
         collectVideoTitle.setText(mEntityList.get(position).getCollectTitle());
         collectNewEpisode.setText(String.valueOf(mEntityList.get(position).getCollectNewEpisode()));
-        if(mEntityList.get(position).collectIsUpdate()==true)
+        if(mEntityList.get(position).collectIsUpdate())
         {
             isVideoUpdate.setText("有更新");
         }

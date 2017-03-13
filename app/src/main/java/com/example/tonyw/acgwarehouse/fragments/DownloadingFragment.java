@@ -34,7 +34,7 @@ public class DownloadingFragment extends Fragment{
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(view.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mDownloadingAdapter =new DownloadingAdapter(entityData,linearLayoutManager);
+        mDownloadingAdapter =new DownloadingAdapter(entityData);
         mRecyclerView.setAdapter(mDownloadingAdapter);
         getData();
         return view;

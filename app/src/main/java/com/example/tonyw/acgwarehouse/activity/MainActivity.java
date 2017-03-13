@@ -1,6 +1,5 @@
 package com.example.tonyw.acgwarehouse.activity;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -42,14 +41,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NavigationView mNavigationView;
     private CircleImageView mLoginButton;
     private UserEntity mUserEntity;
-    public static Activity mainActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         /*初始化各控件*/
-        mainActivity=this;
         mViewPager= (ViewPager) findViewById(R.id.vp);
         mTabLayout= (TabLayout) findViewById(R.id.tl);
         mToolbar= (Toolbar) findViewById(R.id.tb);
@@ -94,11 +91,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 else
                 {
-                    Intent it=new Intent(mainActivity, SearchActivity.class);
+                    Intent it=new Intent(MainActivity.this, SearchActivity.class);
                     try {
                         String name = URLEncoder.encode(query,"utf-8");
                         it.putExtra("videoName",name);
-                        mainActivity.startActivity(it);
+                        MainActivity.this.startActivity(it);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }

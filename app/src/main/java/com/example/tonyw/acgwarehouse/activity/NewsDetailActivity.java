@@ -28,6 +28,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.FINISH_DATABASE;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.IS_FINISH;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.IS_PIC_FINISH;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getHttpBitmap;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getJsonData;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
@@ -37,9 +40,6 @@ import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
  */
 
 public class NewsDetailActivity extends AppCompatActivity{
-    public static final int IS_FINISH=101;
-    public static final int IS_PIC_FINISH=102;
-    public static final int FINISH_DATABASE=103;
     public String result="";
     public String resultFromDataBase="";
     private UserEntity mUserEntity;

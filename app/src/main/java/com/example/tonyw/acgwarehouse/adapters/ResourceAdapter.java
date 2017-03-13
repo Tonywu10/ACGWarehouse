@@ -1,7 +1,7 @@
 package com.example.tonyw.acgwarehouse.adapters;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,24 +10,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.tonyw.acgwarehouse.R;
-import com.example.tonyw.acgwarehouse.activity.ResourceActivity;
 import com.example.tonyw.acgwarehouse.activity.SeriesDetailActivity;
-import com.example.tonyw.acgwarehouse.utils.Entity;
 import com.example.tonyw.acgwarehouse.utils.BaseHolder;
+import com.example.tonyw.acgwarehouse.utils.Entity;
 
 import java.util.List;
-
-/**
- * Created by tonywu10 on 2016/12/13.
- */
 
 public class ResourceAdapter extends RecyclerView.Adapter<BaseHolder>{
     private List<Entity> mEntityList;
     private int mDefaultSpanCount;
-    public ResourceAdapter(List<Entity> entityList, GridLayoutManager gridLayoutManager,int defaultSpanCount)
+    private Activity mResourceActivity;
+    public ResourceAdapter(List<Entity> entityList,int defaultSpanCount,Activity context)
     {
         mEntityList=entityList;
         mDefaultSpanCount=defaultSpanCount;
+        mResourceActivity=context;
     }
 
     @Override
@@ -38,7 +35,7 @@ public class ResourceAdapter extends RecyclerView.Adapter<BaseHolder>{
     }
 
     @Override
-    public void onBindViewHolder(BaseHolder holder, final int position) {
+    public void onBindViewHolder(final BaseHolder holder, int position) {
         ImageView resourceThumb= (ImageView) holder.itemView.findViewById(R.id.resourceThumb);
         TextView resourceTitle= (TextView) holder.itemView.findViewById(R.id.resourceTitle);
         resourceThumb.setImageBitmap(mEntityList.get(position).getVideoThumbBitmap());
@@ -47,12 +44,12 @@ public class ResourceAdapter extends RecyclerView.Adapter<BaseHolder>{
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent it=new Intent(ResourceActivity.resourceActivity, SeriesDetailActivity.class);
-                it.putExtra("videoTitle",mEntityList.get(position).getVideoTitle());
-                it.putExtra("videoIntro",mEntityList.get(position).getVideoIntro());
-                it.putExtra("videoUrl",mEntityList.get(position).getVideoUrl());
-                it.putExtra("allVideoEpisode",mEntityList.get(position).getAllVideoEpisode());
-                ResourceActivity.resourceActivity.startActivity(it);
+                Intent it=new Intent(mResourceActivity, SeriesDetailActivity.class);
+                it.putExtra("videoTitle",mEntityList.get(holder.getAdapterPosition()).getVideoTitle());
+                it.putExtra("videoIntro",mEntityList.get(holder.getAdapterPosition()).getVideoIntro());
+                it.putExtra("videoUrl",mEntityList.get(holder.getAdapterPosition()).getVideoUrl());
+                it.putExtra("allVideoEpisode",mEntityList.get(holder.getAdapterPosition()).getAllVideoEpisode());
+                mResourceActivity.startActivity(it);
             }
         });
     }

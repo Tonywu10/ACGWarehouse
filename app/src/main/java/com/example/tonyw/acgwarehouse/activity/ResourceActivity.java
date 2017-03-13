@@ -26,6 +26,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.IS_FINISH;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.NO_DATA_GET;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.NO_NETWORK;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.REFRESH_COMPLETE;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getHttpBitmap;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.isNetworkConnected;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
@@ -35,11 +39,6 @@ import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
  */
 
 public class ResourceActivity extends AppCompatActivity{
-    private static final int REFRESH_COMPLETE=100;
-    private static final int IS_FINISH=101;
-    private static final int NO_NETWORK=103;
-    private static final int NO_DATA_GET=104;
-
     private Toolbar mToolbar;
     public static final int DEFAULT_SPAN_COUNT=2;
     public static Activity resourceActivity;
@@ -99,7 +98,7 @@ public class ResourceActivity extends AppCompatActivity{
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
         mRecyclerView.setHasFixedSize(true);
-        mResourceAdapter =new ResourceAdapter(entityData,gridLayoutManager,DEFAULT_SPAN_COUNT);
+        mResourceAdapter =new ResourceAdapter(entityData,DEFAULT_SPAN_COUNT,this);
         mRecyclerView.setAdapter(mResourceAdapter);
         mSwipeRefreshLayout= (SwipeRefreshLayout) findViewById(R.id.resource_swipeRefresh);
         mSwipeRefreshLayout.post(new Runnable() {

@@ -26,6 +26,9 @@ import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.BATTERY;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.IS_FINISH;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.TIME;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getJsonData;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
 
@@ -40,10 +43,6 @@ public class PlayActivity extends AppCompatActivity implements Runnable{
     private MyMediaController myMediaController;
     private String videoId="";
     private String result="";
-
-    private static final int TIME = 0;
-    private static final int BATTERY = 1;
-    private static final int IS_FINISH = 2;
 
     private Handler mHandler = new Handler() {
         @Override
