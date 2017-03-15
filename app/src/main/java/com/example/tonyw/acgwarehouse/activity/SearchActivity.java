@@ -1,6 +1,5 @@
 package com.example.tonyw.acgwarehouse.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,6 +25,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.DEFAULT_SPAN_COUNT;
 import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.IS_FINISH;
 import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.NO_DATA_GET;
 import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.NO_NETWORK;
@@ -35,27 +35,14 @@ import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getJsonData;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.isNetworkConnected;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
 
-
-/**
- * Created by tonywu10 on 2016/12/4.
- */
-
 public class SearchActivity extends AppCompatActivity{
-    private Toolbar mToolbar;
-    public static final int DEFAULT_SPAN_COUNT=2;
-    public static Activity searchActivity;
-    private RecyclerView mRecyclerView;
     private List<Entity> entityData=new ArrayList<>();
     private SearchAdapter mSearchAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private String jsonString="";
     private String path="";
     private List<VideoEntity> mPreVideoEntities=new ArrayList<>();
-    private VideoEntity mPreVideoEntity;
     private List<VideoEntity> mDownloadVideoEntities=new ArrayList<>();
-    private List<VideoEntity> mRefreshVideoEntities=new ArrayList<>();
-    private VideoEntity mRefreshVideoEntity;
-    private JSONArray jsonArray=null;
+    private JSONArray jsonArray;
     private Handler mHandler=new Handler()
     {
         public void handleMessage(Message msg)
@@ -64,20 +51,15 @@ public class SearchActivity extends AppCompatActivity{
             {
                 case IS_FINISH:
                     setDynamicPreView(jsonArray);
-                    Long startTime=System.currentTimeMillis();
                     setEntitiesData(mPreVideoEntities,mDownloadVideoEntities);
-                    Long endTime=System.currentTimeMillis();
-                    Log.d("finish time", String.valueOf(endTime-startTime));
                     mSearchAdapter.notifyDataSetChanged();
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
                 case NO_NETWORK:
-                    Log.d("no_network","I'm in");
                     Toast.makeText(getApplicationContext(),"network is down",Toast.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
                 case NO_DATA_GET:
-                    Log.d("no_data_get","I'm in");
                     Toast.makeText(getApplicationContext(),"no data,please refresh!",Toast.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
@@ -92,10 +74,9 @@ public class SearchActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        searchActivity=this;
+        RecyclerView mRecyclerView;
         mRecyclerView= (RecyclerView)findViewById(R.id.search_recyclerview);
         Intent it=getIntent();
-        Log.d("videoName",it.getStringExtra("videoName"));
         path="http://tonywu10.imwork.net:16284/ACGWarehouse/SearchDemo?videoName="+it.getStringExtra("videoName");
         GridLayoutManager gridLayoutManager=new GridLayoutManager(getApplicationContext(),DEFAULT_SPAN_COUNT);
         mRecyclerView.setLayoutManager(gridLayoutManager);
@@ -111,6 +92,7 @@ public class SearchActivity extends AppCompatActivity{
             }
         });
         setDownloadData();
+        Toolbar mToolbar;
         mToolbar= (Toolbar) findViewById(R.id.search_toolbar);
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -123,7 +105,13 @@ public class SearchActivity extends AppCompatActivity{
 
     public void setDynamicPreView(JSONArray jsonArray)
     {
-        initDynamicPreViewData(jsonArray);
+        VideoEntity mPreVideoEntity;
+        for (int i=0;i<jsonArray.length();i++)
+        {
+            mPreVideoEntity=new VideoEntity();
+            mSearchAdapter.addItem(mPreVideoEntity);
+            mPreVideoEntities.add(mPreVideoEntity);
+        }
     }
 
     public void setDownloadData()
@@ -151,15 +139,13 @@ public class SearchActivity extends AppCompatActivity{
         }
     }
 
-    public class downloadVideoInfo implements Runnable{
+    private class downloadVideoInfo implements Runnable{
         @Override
         public void run() {
-            jsonString= getJsonData(path);
-            Log.d("TAG",jsonString);
+            String jsonString = getJsonData(path);
             try {
                 List<Integer> randList;
                 jsonArray=new JSONArray(jsonString);
-                Log.d("jsonArray长度", String.valueOf(jsonArray.length()));
                 randList=getSequence(jsonArray);
                 if(jsonArray.getJSONObject(0).getBoolean("Exist"))
                 {
@@ -200,17 +186,8 @@ public class SearchActivity extends AppCompatActivity{
         }
     }
 
-    public void initDynamicPreViewData(JSONArray jsonArray)
-    {
-        for (int i=0;i<jsonArray.length();i++)
-        {
-            mPreVideoEntity=new VideoEntity();
-            mSearchAdapter.addItem(mPreVideoEntity);
-            mPreVideoEntities.add(mPreVideoEntity);
-        }
-    }
-
     public void setEntitiesDataFromJson(List<VideoEntity> mEntities,JSONArray jsonArray,List<Integer> randList) throws JSONException {
+        VideoEntity mRefreshVideoEntity;
         for (int i=0;i<randList.size();i++)
         {
             JSONObject jsonObject = jsonArray.getJSONObject(randList.get(i));
@@ -233,5 +210,4 @@ public class SearchActivity extends AppCompatActivity{
         }
         return seqList;
     }
-
 }

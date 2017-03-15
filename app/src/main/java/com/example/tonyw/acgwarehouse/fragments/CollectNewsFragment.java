@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,11 +34,9 @@ import static com.example.tonyw.acgwarehouse.utils.HttpUtils.isNetworkConnected;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
 
 public class CollectNewsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
-    private RecyclerView mRecyclerView;
     private List<Entity> entityData=new ArrayList<>();
     private CollectNewsAdapter mCollectNewsAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private String jsonString;
     private List<NewsEntity> mPreNewsCollectEntities=new ArrayList<>();
     private NewsEntity mPreNewsCollectEntity;
     private List<NewsEntity> mDownloadNewsCollectEntities=new ArrayList<>();
@@ -51,21 +48,16 @@ public class CollectNewsFragment extends Fragment implements SwipeRefreshLayout.
             switch (msg.what)
             {
                 case NO_NETWORK:
-                    Log.d("no_network","I'm in");
-                    Toast.makeText(getActivity().getApplicationContext(),"network is down",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(),"网络出错",Toast.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
                 case NO_DATA_GET:
-                    Log.d("no_network","I'm in");
-                    Toast.makeText(getActivity().getApplicationContext(),"network is down",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(),"数据无法获取",Toast.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
                 case IS_FINISH:
                     setDynamicPreView();
-                    Long startTime=System.currentTimeMillis();
                     setEntitiesData(mPreNewsCollectEntities,mDownloadNewsCollectEntities);
-                    Long endTime=System.currentTimeMillis();
-                    Log.d("finish time", String.valueOf(endTime-startTime));
                     mCollectNewsAdapter.notifyDataSetChanged();
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
@@ -77,9 +69,9 @@ public class CollectNewsFragment extends Fragment implements SwipeRefreshLayout.
                              Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_collect_news, container, false);
-        mRecyclerView= (RecyclerView) view.findViewById(R.id.collect_news_recyclerview);
-        mRecyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
-        mRecyclerView.setHasFixedSize(true);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.collect_news_recyclerview);
+        recyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
+        recyclerView.setHasFixedSize(true);
         mSwipeRefreshLayout= (SwipeRefreshLayout) view.findViewById(R.id.news_collect_swipeRefresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.post(new Runnable() {
@@ -89,9 +81,9 @@ public class CollectNewsFragment extends Fragment implements SwipeRefreshLayout.
             }
         });
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(view.getContext());
-        mRecyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setLayoutManager(linearLayoutManager);
         mCollectNewsAdapter =new CollectNewsAdapter(entityData,getActivity());
-        mRecyclerView.setAdapter(mCollectNewsAdapter);
+        recyclerView.setAdapter(mCollectNewsAdapter);
         mUserEntity= (UserEntity) getActivity().getApplication();
         return view;
     }
@@ -113,17 +105,14 @@ public class CollectNewsFragment extends Fragment implements SwipeRefreshLayout.
     {
         if(isNetworkConnected(getActivity().getApplicationContext()))
         {
-            Log.d("start downloading","hello");
             new Thread(new downloadNewsCollectInfo()).start();
         }
         else
         {
-            Log.d("TAG","thread in");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        Log.d("Thread","Im in");
                         Thread.sleep(2000);
                         sendMessage(mHandler,NO_NETWORK);
                     }catch (InterruptedException e)
@@ -141,7 +130,7 @@ public class CollectNewsFragment extends Fragment implements SwipeRefreshLayout.
         public void run() {
             try {
                 String path="http://tonywu10.imwork.net:16284/ACGWarehouse/NewsCollectDemo?userName="+mUserEntity.getUserName();
-                jsonString= HttpUtils.getJsonContent(path);
+                String jsonString = HttpUtils.getJsonContent(path);
                 List<Integer> randList;
                 JSONArray jsonArray = new JSONArray(jsonString);
                 randList=getSequence(jsonArray);
@@ -152,7 +141,6 @@ public class CollectNewsFragment extends Fragment implements SwipeRefreshLayout.
                     @Override
                     public void run() {
                         try {
-                            Log.d("Haaaaa","Im in");
                             Thread.sleep(1000);
                             sendMessage(mHandler,NO_DATA_GET);
                         } catch (InterruptedException e) {
@@ -195,7 +183,6 @@ public class CollectNewsFragment extends Fragment implements SwipeRefreshLayout.
     public void setEntitiesData(List<NewsEntity> mPreEntities,List<NewsEntity> mEntities)
     {
         for (int i = 0; i < mPreEntities.size(); i++) {
-            Log.d("mEntities长度", String.valueOf(mEntities.size()));
             mPreEntities.get(i).setNewsThumbBitmap(mEntities.get(i).getNewsThumbBitmap());
             mPreEntities.get(i).setNewsTitle(mEntities.get(i).getNewsTitle());
             mPreEntities.get(i).setNewsSource("动漫星空");

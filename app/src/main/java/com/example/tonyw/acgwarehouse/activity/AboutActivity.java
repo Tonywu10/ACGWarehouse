@@ -8,7 +8,7 @@ import android.view.View;
 import com.example.tonyw.acgwarehouse.R;
 
 /**
- * 此文件为"关于应用"部分
+ * 关于应用模块
  */
 
 public class AboutActivity extends AppCompatActivity{

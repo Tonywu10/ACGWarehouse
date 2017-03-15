@@ -40,13 +40,8 @@ import static com.example.tonyw.acgwarehouse.utils.HttpUtils.sendUserData;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.getPasswordMD5;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
 
-/**
- * Created by tonyw on 2017/2/16.
- */
-
 public class RegisterActivity extends AppCompatActivity{
     public String checkName="";
-
     Thread checkNameThread;
     Thread uploadToServer;
     CircleImageView regUserAvatar;
@@ -222,7 +217,6 @@ public class RegisterActivity extends AppCompatActivity{
                 uploadToServer.start();
             }
         });
-
         Toolbar tb= (Toolbar) findViewById(R.id.register_toolbar);
         setSupportActionBar(tb);
         tb.setNavigationOnClickListener(new View.OnClickListener() {
@@ -269,7 +263,7 @@ public class RegisterActivity extends AppCompatActivity{
         }
     }
 
-    public class UploadToServer implements Runnable{
+    private class UploadToServer implements Runnable{
         @Override
         public void run() {
             try {
@@ -296,7 +290,7 @@ public class RegisterActivity extends AppCompatActivity{
         }
     }
 
-    public class CheckUserName implements Runnable{
+    private class CheckUserName implements Runnable{
         @Override
         public void run() {
             String userName=regUserName.getText().toString();
@@ -307,7 +301,6 @@ public class RegisterActivity extends AppCompatActivity{
                 for (int i=0;i<jsonArray.length();i++)
                 {
                     JSONObject jsonObject=jsonArray.getJSONObject(i);
-                    Log.d("getJSON", String.valueOf(jsonObject.getInt("exist")));
                     if(jsonObject.getInt("exist")==1)
                     {
                         isPassCheck=false;

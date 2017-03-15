@@ -5,25 +5,19 @@ import android.graphics.Bitmap;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import static com.example.tonyw.acgwarehouse.R.id.videoThumb;
-
-/**
- * Created by tonywu10 on 2016/12/2.
- */
+import java.util.Locale;
 
 public abstract class Entity {
     public static final int CATEGORY_ITEM_TYPE=0;
-    public static final int VIDEO_ITEM_TYPE=1;
-    public static final int COMIC_ITEM_TYPE=2;
-    public static final int NEWS_ITEM_TYPE=3;
-    public static final int DOWNLOADED_ITEM_TYPE=4;
-    public static final int DOWNLOADING_ITEM_TYPE=5;
-    public static final int COLLECT_ANIMATE_ITEM_TYPE=6;
-    public static final int COLLECT_COMIC_ITEM_TYPE=7;
-    public static final int COLLECT_NEWS_ITEM_TYPE=8;
-    public static final int RESOURCE_ITEM_TYPE=9;
-    public static final int SERIES_DETAIL_ITEM_TYPE=10;
+    protected static final int VIDEO_ITEM_TYPE=1;
+    protected static final int COMIC_ITEM_TYPE=2;
+    protected static final int NEWS_ITEM_TYPE=3;
+    protected static final int DOWNLOADED_ITEM_TYPE=4;
+    protected static final int DOWNLOADING_ITEM_TYPE=5;
+    protected static final int COLLECT_ANIMATE_ITEM_TYPE=6;
+    protected static final int COLLECT_COMIC_ITEM_TYPE=7;
+    protected static final int COLLECT_NEWS_ITEM_TYPE=8;
+    protected static final int RESOURCE_ITEM_TYPE=9;
 
     private String videoThumbPath;
     private Bitmap videoThumbBitmap;
@@ -58,7 +52,7 @@ public abstract class Entity {
     private int seriesEpisode;
     private String playUrl;
 
-    public Format format=new SimpleDateFormat("yyyy-MM-dd");
+    private Format format=new SimpleDateFormat("yyyy-MM-dd", Locale.CHINESE);
 
     public Entity(String name)
     {
@@ -145,9 +139,6 @@ public abstract class Entity {
         return playUrl;
     }
 
-    public void setPlayUrl(String playUrl) {
-        this.playUrl = playUrl;
-    }
 
     public int getAllVideoEpisode() {
         return allVideoEpisode;
@@ -181,21 +172,8 @@ public abstract class Entity {
         this.newsUrl = newsUrl;
     }
 
-    public int getVideoThumb() {
-        return videoThumb;
-    }
-
     public String getVideoTitle() {
         return videoTitle;
-    }
-
-
-    public String getVideoThumbPath() {
-        return videoThumbPath;
-    }
-
-    public void setVideoThumbPath(String videoThumbPath) {
-        this.videoThumbPath = videoThumbPath;
     }
 
     public Bitmap getVideoThumbBitmap() {
@@ -210,37 +188,8 @@ public abstract class Entity {
         this.videoTitle = videoTitle;
     }
 
-
     public String getCategoryName() {
         return categoryName;
-    }
-
-    public int getComicThumb() {
-        return comicThumb;
-    }
-
-    public String getComicTitle() {
-        return comicTitle;
-    }
-
-    public int getNewEpisode() {
-        return newEpisode;
-    }
-
-    public long getDownloadedSize() {
-        return downloadedSize;
-    }
-
-    public int getDownloadedThumb() {
-        return downloadedThumb;
-    }
-
-    public String getDownloadedTitle() {
-        return downloadedTitle;
-    }
-
-    public String getDownloadedType() {
-        return downloadedType;
     }
 
     public String getNewsDate() {
@@ -259,10 +208,6 @@ public abstract class Entity {
         this.newsDate = newsDate;
     }
 
-    public int getDownloadingProgress() {
-        return downloadingProgress;
-    }
-
     public Bitmap getNewsThumbBitmap() {
         return newsThumbBitmap;
     }
@@ -277,46 +222,6 @@ public abstract class Entity {
 
     public void setNewsTitle(String newsTitle) {
         this.newsTitle = newsTitle;
-    }
-
-    public long getDownloadingSize() {
-        return downloadingSize;
-    }
-
-    public int getDownloadingThumb() {
-        return downloadingThumb;
-    }
-
-    public String getDownloadingTitle() {
-        return downloadingTitle;
-    }
-
-    public int getCollectNewEpisode() {
-        return collectNewEpisode;
-    }
-
-    public String getCollectTitle() {
-        return collectTitle;
-    }
-
-    public int getCollectThumb() {
-        return collectThumb;
-    }
-
-    public boolean collectIsUpdate() {
-        return collectIsUpdate;
-    }
-
-    public int getResourceEpisode() {
-        return resourceEpisode;
-    }
-
-    public int getResourceThumb() {
-        return resourceThumb;
-    }
-
-    public String getResourceTitle() {
-        return resourceTitle;
     }
 
     public int getSeriesEpisode() {

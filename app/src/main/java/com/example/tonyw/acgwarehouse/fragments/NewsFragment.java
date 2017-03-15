@@ -40,7 +40,6 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private boolean isLoadingMore = true;
     private NewsAdapter mNewsAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-
     private List<Entity> entityData=new ArrayList<>();
     private List<NewsEntity> mPreNewsEntities=new ArrayList<>();
     private List<NewsEntity> mDownloadNewsEntities=new ArrayList<>();
@@ -73,12 +72,12 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     break;
                 case NO_NETWORK:
                     Log.d("no_network","I'm in");
-                    Toast.makeText(getActivity().getApplicationContext(),"network is down",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(),"网络出错",Toast.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
                 case NO_DATA_GET:
                     Log.d("no_data_get","I'm in");
-                    Toast.makeText(getActivity().getApplicationContext(),"no data,please refresh!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(),"无法获取数据，请刷新",Toast.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
                 case LOAD_MORE_DATA:
@@ -133,7 +132,6 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 int totalItemCount = linearLayoutManager.getItemCount();
                 if (lastVisibleItem >= totalItemCount - 4 && dy > 0) {
                     if(isLoadingMore){
-                        Log.d("开启Thread","success");
                         isLoadingMore = false;
                         new Thread(new loadNewsInfo()).start();
                     }
@@ -145,25 +143,28 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     public void setDynamicPreView()
     {
-        initDynamicPreViewData();
+        NewsEntity mPreNewsEntity;
+        for (int i=0;i<mDownloadNewsEntities.size();i++)
+        {
+            mPreNewsEntity=new NewsEntity();
+            mNewsAdapter.addItem(mPreNewsEntity);
+            mPreNewsEntities.add(mPreNewsEntity);
+        }
     }
 
     public void setDownloadData()
     {
         if(isNetworkConnected(getActivity().getApplicationContext()))
         {
-            Log.d("start downloading","hello");
             new Thread(new downloadNewsInfo()).start();
         }
         else
         {
-            Log.d("TAG","thread in");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        Log.d("Thread","I'm in");
-                        Thread.sleep(2000);
+                        Thread.sleep(1000);
                         sendMessage(mHandler,NO_NETWORK);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -172,7 +173,6 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             }).start();
         }
     }
-
 
     public void setRefreshData()
     {
@@ -184,15 +184,10 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         @Override
         public void run() {
             try {
-                Log.d("loadNewsInfo","我进来了");
                 List<Integer> randList;
-                Log.d("lastUrl",mPreNewsEntities.get(mPreNewsEntities.size()-1).getNewsUrl());
                 String path="http://tonywu10.imwork.net:16284/ACGWarehouse/NewsLoadDemo?lastUrl="+mPreNewsEntities.get(mPreNewsEntities.size()-1).getNewsUrl();
-                Log.d("mPreNewsEntitiesSize", String.valueOf(mPreNewsEntities.size()));
                 JSONArray jsonArray;
                 jsonArray = new JSONArray(getJsonData(path));
-                Log.d("jsonArray数据",jsonArray.toString());
-                Log.d("jsonArray长度", String.valueOf(jsonArray.length()));
                 randList=getSequence(jsonArray);
                 mRefreshNewsEntities.clear();
                 setEntitiesDataFromJson(mRefreshNewsEntities,jsonArray,randList);
@@ -211,11 +206,9 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             String path="http://tonywu10.imwork.net:16284/ACGWarehouse/NewsDemo";
             String jsonString;
             jsonString= HttpUtils.getJsonContent(path);
-            Log.d("TAG",jsonString);
             try {
                 List<Integer> randList;
                 JSONArray jsonArray=new JSONArray(jsonString);
-                Log.d("jsonArray长度", String.valueOf(jsonArray.length()));
                 randList=getSequence(jsonArray);
                 setEntitiesDataFromJson(mDownloadNewsEntities,jsonArray,randList);
                 sendMessage(mHandler,IS_FINISH);
@@ -224,7 +217,6 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     @Override
                     public void run() {
                         try {
-                            Log.d("Haaaaa","Im in");
                             Thread.sleep(1000);
                             sendMessage(mHandler,NO_DATA_GET);
                         } catch (InterruptedException e) {
@@ -247,12 +239,9 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 else
                 {
                     String firstUrl=mPreNewsEntities.get(0).getNewsUrl();
-                    Log.d("url",firstUrl);
                     List<Integer> randList;
                     String path="http://tonywu10.imwork.net:16284/ACGWarehouse/NewsRefreshDemo?first_url="+firstUrl;
                     JSONArray jsonArray=new JSONArray(getJsonData(path));
-                    Log.d("jsonArray数据",jsonArray.toString());
-                    Log.d("jsonArray长度", String.valueOf(jsonArray.length()));
                     randList=getSequence(jsonArray);
                     mRefreshNewsEntities.clear();
                     setEntitiesDataFromJson(mRefreshNewsEntities,jsonArray,randList);
@@ -263,7 +252,6 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     @Override
                     public void run() {
                         try {
-                            Log.d("Haha","Im in");
                             Thread.sleep(100);
                             sendMessage(mHandler,NO_DATA_GET);
                         } catch (InterruptedException e) {
@@ -295,7 +283,6 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     {
         if(isDownloadedData) {
             for (int i = 0; i < mPreEntities.size(); i++) {
-                Log.d("mEntities长度", String.valueOf(mEntities.size()));
                 mPreEntities.get(i).setNewsThumbBitmap(mEntities.get(i).getNewsThumbBitmap());
                 mPreEntities.get(i).setNewsTitle(mEntities.get(i).getNewsTitle());
                 mPreEntities.get(i).setNewsSource("动漫星空");
@@ -305,25 +292,12 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }
         else {
             for (int i = 0; i < mEntities.size(); i++) {
-                Log.d("mEntities长度", String.valueOf(mEntities.size()));
-                Log.d("mPreEntities长度", String.valueOf(mPreEntities.size()));
                 mPreEntities.get(i).setNewsThumbBitmap(mEntities.get(i).getNewsThumbBitmap());
                 mPreEntities.get(i).setNewsTitle(mEntities.get(i).getNewsTitle());
                 mPreEntities.get(i).setNewsSource("动漫星空");
                 mPreEntities.get(i).setNewsDate(mEntities.get(i).getNewsDate());
                 mPreEntities.get(i).setNewsUrl(mEntities.get(i).getNewsUrl());
             }
-        }
-    }
-
-    public void initDynamicPreViewData()
-    {
-        NewsEntity mPreNewsEntity;
-        for (int i=0;i<mDownloadNewsEntities.size();i++)
-        {
-            mPreNewsEntity=new NewsEntity();
-            mNewsAdapter.addItem(mPreNewsEntity);
-            mPreNewsEntities.add(mPreNewsEntity);
         }
     }
 

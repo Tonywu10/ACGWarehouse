@@ -35,10 +35,6 @@ import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getHttpBitmap;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getJsonData;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
 
-/**
- * Created by tonyw on 2017/2/1.
- */
-
 public class NewsDetailActivity extends AppCompatActivity{
     public String result="";
     public String resultFromDataBase="";
@@ -57,7 +53,6 @@ public class NewsDetailActivity extends AppCompatActivity{
                     try {
                         mainLinearLayout= (LinearLayout) findViewById(R.id.news_detail_linearlayout);
                         JSONArray jsonArray=new JSONArray(result);
-                        Log.d("jsonLength", String.valueOf(jsonArray.length()));
                         for (int i=0;i<jsonArray.length();i++)
                         {
                             JSONObject jsonObject=jsonArray.getJSONObject(i);
@@ -131,11 +126,10 @@ public class NewsDetailActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_detail);
-        Toolbar mToolbar;
-        TextView mTextView;
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.news_detail_toolbar);
+        TextView mTextView= (TextView) findViewById(R.id.news_detail_title);
         Intent it=getIntent();
         mUserEntity= (UserEntity) getApplication();
-        mToolbar= (Toolbar) findViewById(R.id.news_detail_toolbar);
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,7 +137,6 @@ public class NewsDetailActivity extends AppCompatActivity{
                 finish();
             }
         });
-        mTextView= (TextView) findViewById(R.id.news_detail_title);
         mTextView.setText(it.getStringExtra("NewsTitle"));
 
         new getJson().start();
@@ -175,7 +168,7 @@ public class NewsDetailActivity extends AppCompatActivity{
         return true;
     }
 
-    public class getJson extends Thread{
+    private class getJson extends Thread{
         @Override
         public void run() {
             Intent it=getIntent();
@@ -191,12 +184,11 @@ public class NewsDetailActivity extends AppCompatActivity{
         }
     }
 
-    public class getNewsPic extends Thread{
+    private class getNewsPic extends Thread{
         @Override
         public void run() {
             Intent it=getIntent();
             String path="http://tonywu10.imwork.net:16284/ACGWarehouse/NewsDetailDemo?news_url="+it.getStringExtra("news_url")+"&userName="+mUserEntity.getUserName();
-            Log.d("path",path);
             try {
                 result=getJsonData(path);
                 JSONArray jsonArray=new JSONArray(result);
@@ -217,7 +209,6 @@ public class NewsDetailActivity extends AppCompatActivity{
                     }
                 }
                 sendMessage(mHandler,IS_PIC_FINISH);
-                Log.d("newsPicBitmap", String.valueOf(newsPicBitmap.size()));
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -225,7 +216,7 @@ public class NewsDetailActivity extends AppCompatActivity{
         }
     }
 
-    public class collectOrNotCollectNews extends Thread
+    private class collectOrNotCollectNews extends Thread
     {
         @Override
         public void run() {

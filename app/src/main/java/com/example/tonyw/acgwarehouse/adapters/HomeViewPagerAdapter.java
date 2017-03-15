@@ -9,17 +9,11 @@ import com.example.tonyw.acgwarehouse.fragments.NewsFragment;
 
 import java.util.ArrayList;
 
-/**
- * Created by tonywu10 on 2016/11/28.
- */
-
 public class HomeViewPagerAdapter extends FragmentStatePagerAdapter {
-    ArrayList<String> titleContainer=new ArrayList<>();
-
+    private ArrayList<String> titleContainer=new ArrayList<>();
     public HomeViewPagerAdapter(FragmentManager fm) {
         super(fm);
     }
-
     @Override
     public Fragment getItem(int position) {
         Fragment f = null;

@@ -31,14 +31,9 @@ import com.example.tonyw.acgwarehouse.utils.CircleImageView;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,View.OnClickListener{
-    private ViewPager mViewPager;
-    private TabLayout mTabLayout;
-    private Toolbar mToolbar;
     private ActionBarDrawerToggle mActionBarDrawerToggle;
     private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
     private CircleImageView mLoginButton;
     private UserEntity mUserEntity;
 
@@ -47,11 +42,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         /*初始化各控件*/
-        mViewPager= (ViewPager) findViewById(R.id.vp);
-        mTabLayout= (TabLayout) findViewById(R.id.tl);
-        mToolbar= (Toolbar) findViewById(R.id.tb);
+        ViewPager mViewPager= (ViewPager) findViewById(R.id.vp);
+        TabLayout mTabLayout= (TabLayout) findViewById(R.id.tl);
+        Toolbar mToolbar= (Toolbar) findViewById(R.id.tb);
+        NavigationView mNavigationView= (NavigationView) findViewById(R.id.navigation);
         mActionBarDrawerToggle=new ActionBarDrawerToggle(this,mDrawerLayout,mToolbar,R.string.open,R.string.close);
-        mNavigationView= (NavigationView) findViewById(R.id.navigation);
         mDrawerLayout= (DrawerLayout) findViewById(R.id.drawer_layout);
         mLoginButton= (CircleImageView)findViewById(R.id.pic);
         mLoginButton.setOnClickListener(this);
@@ -61,16 +56,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mViewPager.setOffscreenPageLimit(1);
         mTabLayout.setupWithViewPager(mViewPager);
         /*为导航栏绑定菜单*/
-        mNavigationView= (NavigationView) findViewById(R.id.navigation);
         mNavigationView.setNavigationItemSelectedListener(this);
         /*设置DrawerLayout的动作*/
         setSupportActionBar(mToolbar);
         mActionBarDrawerToggle=new ActionBarDrawerToggle(this,mDrawerLayout,mToolbar,R.string.open,R.string.close);
         mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
         mActionBarDrawerToggle.syncState();
+        /*使用全局变量userEntity*/
         mUserEntity= (UserEntity) getApplication();
         mUserEntity.setUserName("");
-        Log.d("UserName",mUserEntity.getUserName());
         /*注册广播事件*/
         IntentFilter filter = new IntentFilter("RegisterActivity");
         registerReceiver(mBroadcastReceiver,filter);
@@ -181,7 +175,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Bitmap bitmap= BitmapFactory.decodeByteArray(bis,0,bis.length);
             mLoginButton.setImageBitmap(bitmap);
             mUserEntity.setUserName(name);
-            Log.d("userNameNow",mUserEntity.getUserName());
             mLoginButton.setClickable(false);
         }
     };

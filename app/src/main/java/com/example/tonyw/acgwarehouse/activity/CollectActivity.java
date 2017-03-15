@@ -12,7 +12,7 @@ import com.example.tonyw.acgwarehouse.R;
 import com.example.tonyw.acgwarehouse.adapters.CollectViewPagerAdapter;
 
 /**
- *
+ *收藏新闻模块
  */
 public class CollectActivity extends AppCompatActivity {
     @Override

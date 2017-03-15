@@ -1,12 +1,10 @@
 package com.example.tonyw.acgwarehouse.utils;
 
-/**
- * Created by tonywu10 on 2017/3/10.
- */
-
 public class ConstantUtils {
     public static final int BATTERY=100;
     public static final int CHECK_PASS=101;
+    public static final int DEFAULT_SPAN_COUNT=2;
+    public static final int DEFAULT_SPAN_COUNT_FIVE=5;
     public static final int FINISH_DATABASE=102;
     public static final int IS_FINISH=103;
     public static final int IS_PIC_FINISH=104;

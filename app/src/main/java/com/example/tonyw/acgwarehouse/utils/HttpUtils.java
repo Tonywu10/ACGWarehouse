@@ -29,7 +29,7 @@ public class HttpUtils {
     public HttpUtils() {
                  // TODO Auto-generated constructor stub
     }
-
+    //直接返回Json数据
     public static String getJsonContent(String url_path) {
         try {
             URL url = new URL(url_path);
@@ -84,7 +84,7 @@ public class HttpUtils {
         }
         return false;
     }
-
+    //获取图片
     public static Bitmap getHttpBitmap(String url){
         Log.d("getPic","Im in");
         Long startTime=System.currentTimeMillis();
@@ -114,7 +114,7 @@ public class HttpUtils {
         Log.d("getHttpTime", String.valueOf(endTime-startTime));
         return bitmap;
     }
-
+    //从客户端获取参数后返回Json数据
     public static String getJsonData(String path)
     {
         try {
@@ -129,7 +129,6 @@ public class HttpUtils {
             String inputLine;
             String result="";
             while (((inputLine = buffer.readLine()) != null)){
-                Log.d("Running","Im in");
                 result += inputLine + "\n";
             }
             is.close();
@@ -140,7 +139,7 @@ public class HttpUtils {
         }
         return "";
     }
-
+    //上传用户信息
     public static void sendUserData(String path,String attr1,String attr2,String attr3)
     {
         ArrayList<NameValuePair> data=new ArrayList<>();

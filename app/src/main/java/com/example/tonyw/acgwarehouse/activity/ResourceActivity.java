@@ -1,6 +1,5 @@
 package com.example.tonyw.acgwarehouse.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -26,33 +25,20 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.DEFAULT_SPAN_COUNT;
 import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.IS_FINISH;
 import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.NO_DATA_GET;
 import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.NO_NETWORK;
-import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.REFRESH_COMPLETE;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getHttpBitmap;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.isNetworkConnected;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
 
-/**
- * Created by tonywu10 on 2016/12/13.
- */
-
-public class ResourceActivity extends AppCompatActivity{
-    private Toolbar mToolbar;
-    public static final int DEFAULT_SPAN_COUNT=2;
-    public static Activity resourceActivity;
-    private RecyclerView mRecyclerView;
+public class ResourceActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
     private List<Entity> entityData=new ArrayList<>();
     private ResourceAdapter mResourceAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private String jsonString="";
-    private String path="http://tonywu10.imwork.net:16284/ACGWarehouse/VideoDemo";
     private List<VideoEntity> mPreVideoEntities=new ArrayList<>();
-    private VideoEntity mPreVideoEntity;
     private List<VideoEntity> mDownloadVideoEntities=new ArrayList<>();
-    private List<VideoEntity> mRefreshVideoEntities=new ArrayList<>();
-    private VideoEntity mRefreshVideoEntity;
     private JSONArray jsonArray=null;
     private Handler mHandler=new Handler()
     {
@@ -60,28 +46,18 @@ public class ResourceActivity extends AppCompatActivity{
         {
             switch (msg.what)
             {
-                case REFRESH_COMPLETE:
-                    setEntitiesData(mPreVideoEntities,mRefreshVideoEntities);
-                    mResourceAdapter.notifyDataSetChanged();
-                    mSwipeRefreshLayout.setRefreshing(false);
-                    break;
                 case IS_FINISH:
                     setDynamicPreView(jsonArray);
-                    Long startTime=System.currentTimeMillis();
                     setEntitiesData(mPreVideoEntities,mDownloadVideoEntities);
-                    Long endTime=System.currentTimeMillis();
-                    Log.d("finish time", String.valueOf(endTime-startTime));
                     mResourceAdapter.notifyDataSetChanged();
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
                 case NO_NETWORK:
-                    Log.d("no_network","I'm in");
-                    Toast.makeText(getApplicationContext(),"network is down",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"网络出错",Toast.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
                 case NO_DATA_GET:
-                    Log.d("no_data_get","I'm in");
-                    Toast.makeText(getApplicationContext(),"no data,please refresh!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"无法获得数据，请刷新",Toast.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
             }
@@ -92,8 +68,7 @@ public class ResourceActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resource);
-        resourceActivity=this;
-        mRecyclerView= (RecyclerView)findViewById(R.id.resource_recyclerview);
+        RecyclerView mRecyclerView = (RecyclerView)findViewById(R.id.resource_recyclerview);
         GridLayoutManager gridLayoutManager=new GridLayoutManager(getApplicationContext(),DEFAULT_SPAN_COUNT);
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
@@ -107,7 +82,7 @@ public class ResourceActivity extends AppCompatActivity{
                 mSwipeRefreshLayout.setRefreshing(true);
             }
         });
-        setDownloadData();
+        Toolbar mToolbar;
         mToolbar= (Toolbar) findViewById(R.id.resource_toolbar);
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -116,27 +91,32 @@ public class ResourceActivity extends AppCompatActivity{
                 finish();
             }
         });
+        setDownloadData();
     }
+
 
     public void setDynamicPreView(JSONArray jsonArray)
     {
-        initDynamicPreViewData(jsonArray);
+        VideoEntity mPreVideoEntity;
+        for (int i=0;i<jsonArray.length();i++)
+        {
+            mPreVideoEntity=new VideoEntity();
+            mResourceAdapter.addItem(mPreVideoEntity);
+            mPreVideoEntities.add(mPreVideoEntity);
+        }
     }
-
+    //下载数据
     public void setDownloadData()
     {
         if(isNetworkConnected(getApplicationContext()))
         {
-            Log.d("start downloading","hello");
             new Thread(new downloadVideoInfo()).start();
         }
         else
         {
-            Log.d("TAG","thread in");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d("Thread","I'm in");
                     try {
                         Thread.sleep(1000);
                         sendMessage(mHandler,NO_NETWORK);
@@ -148,15 +128,21 @@ public class ResourceActivity extends AppCompatActivity{
         }
     }
 
-    public class downloadVideoInfo implements Runnable{
+    @Override
+    public void onRefresh() {
+        Log.d("Refresh","Running");
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    //下载视频的相关数据
+    private class downloadVideoInfo implements Runnable{
         @Override
         public void run() {
-            jsonString= HttpUtils.getJsonContent(path);
-            Log.d("TAG",jsonString);
+            String path="http://tonywu10.imwork.net:16284/ACGWarehouse/VideoDemo";
+            String jsonString = HttpUtils.getJsonContent(path);
             try {
                 List<Integer> randList;
                 jsonArray=new JSONArray(jsonString);
-                Log.d("jsonArray长度", String.valueOf(jsonArray.length()));
                 randList=getSequence(jsonArray);
                 setEntitiesDataFromJson(mDownloadVideoEntities,jsonArray,randList);
                 sendMessage(mHandler,IS_FINISH);
@@ -176,12 +162,11 @@ public class ResourceActivity extends AppCompatActivity{
             }
         }
     }
-
+    //将预先加载的Entities进行数据填充
     public void setEntitiesData(List<VideoEntity> mPreEntities, List<VideoEntity> mEntities)
     {
         for (int i=0;i<mPreEntities.size();i++)
         {
-            Log.d("TAG", String.valueOf(mPreEntities.size()));
             mPreEntities.get(i).setVideoThumbBitmap(mEntities.get(i).getVideoThumbBitmap());
             mPreEntities.get(i).setVideoTitle(mEntities.get(i).getVideoTitle());
             mPreEntities.get(i).setAllVideoEpisode(mEntities.get(i).getAllVideoEpisode());
@@ -189,18 +174,9 @@ public class ResourceActivity extends AppCompatActivity{
             mPreEntities.get(i).setVideoIntro(mEntities.get(i).getVideoIntro());
         }
     }
-
-    public void initDynamicPreViewData(JSONArray jsonArray)
-    {
-        for (int i=0;i<jsonArray.length();i++)
-        {
-            mPreVideoEntity=new VideoEntity();
-            mResourceAdapter.addItem(mPreVideoEntity);
-            mPreVideoEntities.add(mPreVideoEntity);
-        }
-    }
-
+    //将获得的Json数据填充
     public void setEntitiesDataFromJson(List<VideoEntity> mEntities,JSONArray jsonArray,List<Integer> randList) throws JSONException {
+        VideoEntity mRefreshVideoEntity;
         for (int i=0;i<randList.size();i++)
         {
             JSONObject jsonObject = jsonArray.getJSONObject(randList.get(i));
@@ -213,7 +189,7 @@ public class ResourceActivity extends AppCompatActivity{
             mEntities.add(mRefreshVideoEntity);
         }
     }
-
+    //返回顺序序列
     public List<Integer> getSequence(JSONArray jsonArray)
     {
         List<Integer> seqList=new ArrayList<>();

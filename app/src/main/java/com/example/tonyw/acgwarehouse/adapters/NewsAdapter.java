@@ -26,7 +26,6 @@ public class NewsAdapter extends RecyclerView.Adapter<BaseHolder>{
         mMainActivity=context;
     }
 
-
     @Override
     public BaseHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_news_item, parent, false);

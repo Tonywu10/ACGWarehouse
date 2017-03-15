@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,8 +94,6 @@ public class AnimateAdapter extends RecyclerView.Adapter<BaseHolder>{
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("videoTitle",mEntityList.get(position).getVideoTitle());
-                Log.d("videoIntro",mEntityList.get(position).getVideoIntro());
                 Intent it=new Intent(mMainActivity, SeriesDetailActivity.class);
                 it.putExtra("videoTitle",mEntityList.get(position).getVideoTitle());
                 it.putExtra("videoIntro",mEntityList.get(position).getVideoIntro());

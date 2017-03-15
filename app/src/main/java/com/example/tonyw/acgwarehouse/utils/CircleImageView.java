@@ -18,11 +18,6 @@ import android.widget.ImageView;
 
 import com.example.tonyw.acgwarehouse.R;
 
-
-/**
- * Created by tonywu10 on 2016/11/28.
- */
-
 public class CircleImageView extends ImageView {
 
     private static final ScaleType SCALE_TYPE = ScaleType.CENTER_CROP;
