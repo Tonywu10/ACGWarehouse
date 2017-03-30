@@ -134,7 +134,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 super.onScrolled(recyclerView, dx, dy);
                 int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
                 int totalItemCount = linearLayoutManager.getItemCount();
-                if (lastVisibleItem >= totalItemCount && dy > 0) {
+                if (lastVisibleItem >= totalItemCount-1 && dy > 0) {
                     if(isLoadingMore){
                         isLoadingMore = false;
                         mProgressDialog.show();

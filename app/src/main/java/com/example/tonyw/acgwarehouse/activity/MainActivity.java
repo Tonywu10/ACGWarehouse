@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,11 +32,16 @@ import com.example.tonyw.acgwarehouse.utils.CircleImageView;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import static com.example.tonyw.acgwarehouse.utils.MessageUtils.base64ToBitmap;
+import static com.example.tonyw.acgwarehouse.utils.MessageUtils.bitmapToBase64;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,View.OnClickListener{
     private ActionBarDrawerToggle mActionBarDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private CircleImageView mLoginButton;
     private UserEntity mUserEntity;
+    private SharedPreferences userInfo;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -62,9 +68,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mActionBarDrawerToggle=new ActionBarDrawerToggle(this,mDrawerLayout,mToolbar,R.string.open,R.string.close);
         mDrawerLayout.setDrawerListener(mActionBarDrawerToggle);
         mActionBarDrawerToggle.syncState();
+        /*使用SharedPreference*/
+        userInfo = getSharedPreferences("userInfo",0);
         /*使用全局变量userEntity*/
+        String userName=userInfo.getString("userName","");
+        Bitmap userAvatar=base64ToBitmap(userInfo.getString("userAvatar",""));
+        Log.d("userName",userName);
         mUserEntity= (UserEntity) getApplication();
-        mUserEntity.setUserName("");
+        if(!userName.equals("")) {
+            mUserEntity.setUserName(userName);
+            mLoginButton.setImageBitmap(userAvatar);
+            mLoginButton.setClickable(false);
+        }
+        else
+            mUserEntity.setUserName("");
         /*注册广播事件*/
         IntentFilter filter = new IntentFilter("RegisterActivity");
         registerReceiver(mBroadcastReceiver,filter);
@@ -73,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.main_toolbar_menu, menu);
         final SearchView mSearchView = (SearchView) menu.findItem(R.id.search).getActionView();
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -90,13 +107,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         String name = URLEncoder.encode(query,"utf-8");
                         it.putExtra("videoName",name);
                         MainActivity.this.startActivity(it);
+                        mSearchView.setQuery("", false);
+                        mSearchView.clearFocus();
+                        menu.findItem(R.id.search).collapseActionView();
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
                 }
                 return true;
             }
-
             @Override
             public boolean onQueryTextChange(String newText) {
                 return false;
@@ -137,6 +156,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     mUserEntity.setUserName("");
                     mLoginButton.setImageResource(R.drawable.login);
                     mLoginButton.setClickable(true);
+                    editor = userInfo.edit();
+                    editor.clear();
+                    editor.apply();
                     Toast.makeText(this,"已注销",Toast.LENGTH_SHORT).show();
                 }
                 else
@@ -173,6 +195,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             byte[] bis=intent.getByteArrayExtra("bitmap");
             String name=intent.getStringExtra("userName");
             Bitmap bitmap= BitmapFactory.decodeByteArray(bis,0,bis.length);
+            String avatar = bitmapToBase64(bitmap);
+            editor = userInfo.edit();
+            editor.putString("userName",name);
+            editor.putString("userAvatar",avatar);
+            editor.apply();
             mLoginButton.setImageBitmap(bitmap);
             mUserEntity.setUserName(name);
             mLoginButton.setClickable(false);
@@ -184,4 +211,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onDestroy();
         unregisterReceiver(mBroadcastReceiver);
     }
+
+
 }

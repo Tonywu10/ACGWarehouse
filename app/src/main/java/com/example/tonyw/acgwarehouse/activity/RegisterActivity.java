@@ -239,7 +239,7 @@ public class RegisterActivity extends AppCompatActivity{
             }
             try {
                 InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
-                if((inputStream != null ? inputStream.available() : 0) >524488)
+                if((inputStream != null ? inputStream.available() : 0) >471860)
                 {
                     Toast.makeText(this,"头像不得大于500K",Toast.LENGTH_SHORT).show();
                 }
