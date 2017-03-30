@@ -12,6 +12,14 @@
         app:navigationIcon="@drawable/abc_ic_ab_back_mtrl_am_alpha"
         app:title="我的收藏">
     </android.support.v7.widget.Toolbar>
-    <include layout="@layout/tab_layout"/>
-
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/news_collect_swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/collect_news_recyclerview">
+        </android.support.v7.widget.RecyclerView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

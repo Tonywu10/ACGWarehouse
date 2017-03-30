@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -66,11 +67,18 @@ public class PlayActivity extends AppCompatActivity implements Runnable{
         }
     };
 
+    protected void hideBottomUIMenu() {
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (!io.vov.vitamio.LibsChecker.checkVitamioLibs(this))
             return;
+        hideBottomUIMenu();
         int flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
         Window window = PlayActivity.this.getWindow();
         window.setFlags(flag, flag);

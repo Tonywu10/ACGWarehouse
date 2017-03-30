@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,15 +86,9 @@ public class CollectNewsFragment extends Fragment implements SwipeRefreshLayout.
         mCollectNewsAdapter =new CollectNewsAdapter(entityData,getActivity());
         recyclerView.setAdapter(mCollectNewsAdapter);
         mUserEntity= (UserEntity) getActivity().getApplication();
+        Log.d("Entity Name",mUserEntity.getUserName());
+        setDownloadData();
         return view;
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser&&(mPreNewsCollectEntities.size()==0)){
-            setDownloadData();
-        }
     }
 
     public void setDynamicPreView()

@@ -29,14 +29,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.example.tonyw.acgwarehouse.activity.LoginActivity.loginActivity;
 import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.SAME_NAME;
 import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.UPLOAD_FINISH;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getJsonData;
-import static com.example.tonyw.acgwarehouse.utils.HttpUtils.sendUserData;
+import static com.example.tonyw.acgwarehouse.utils.HttpUtils.sendPostMessage;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.getPasswordMD5;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
 
@@ -64,11 +66,9 @@ public class RegisterActivity extends AppCompatActivity{
             switch (msg.what)
             {
                 case UPLOAD_FINISH:
-                    mProgressDialog.dismiss();
-                    finish();
-                    loginActivity.finish();
                     ByteArrayOutputStream baos=new ByteArrayOutputStream();
                     userAvatarBitmap.compress(Bitmap.CompressFormat.JPEG,100,baos);
+                    Toast.makeText(RegisterActivity.this,"注册成功",Toast.LENGTH_SHORT).show();
                     byte[] bitmapByte=baos.toByteArray();
                     String name=regUserName.getText().toString().trim();
                     Intent it=new Intent("RegisterActivity");
@@ -76,6 +76,9 @@ public class RegisterActivity extends AppCompatActivity{
                     it.putExtra("userName",name);
                     sendBroadcast(it);
                     Log.d("send","broad");
+                    mProgressDialog.dismiss();
+                    finish();
+                    loginActivity.finish();
                     break;
                 case SAME_NAME:
                     mProgressDialog.dismiss();
@@ -214,7 +217,6 @@ public class RegisterActivity extends AppCompatActivity{
                 checkNameThread=new Thread(new CheckUserName());
                 uploadToServer=new Thread(new UploadToServer());
                 checkNameThread.start();
-                uploadToServer.start();
             }
         });
         Toolbar tb= (Toolbar) findViewById(R.id.register_toolbar);
@@ -232,14 +234,21 @@ public class RegisterActivity extends AppCompatActivity{
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_PHOTO_FOR_AVATAR && resultCode == Activity.RESULT_OK) {
             if (data == null) {
-                Toast.makeText(getApplicationContext(),"好像出了点故障",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"好像出了点故障",Toast.LENGTH_SHORT).show();
                 return;
             }
             try {
                 InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(data.getData());
-                userAvatarBitmap=BitmapFactory.decodeStream(inputStream);
+                if((inputStream != null ? inputStream.available() : 0) >524488)
+                {
+                    Toast.makeText(this,"头像不得大于500K",Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    userAvatarBitmap=BitmapFactory.decodeStream(inputStream);
+                }
                 regUserAvatar.setImageBitmap(userAvatarBitmap);
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -247,17 +256,13 @@ public class RegisterActivity extends AppCompatActivity{
 
     public boolean comparePassword(String password,String checkPassword)
     {
-        Log.d("password",password);
-        Log.d("checkPassword",checkPassword);
         if(!password.equals(checkPassword)&&password.length()>0&&checkPassword.length()>0)
         {
-            Log.d("check","not same");
             regRePasswordWrapper.setError("两次输入的密码不一致！");
             return false;
         }
         else
         {
-            Log.d("check","same");
             regRePasswordWrapper.setError("");
             return true;
         }
@@ -266,26 +271,21 @@ public class RegisterActivity extends AppCompatActivity{
     private class UploadToServer implements Runnable{
         @Override
         public void run() {
-            try {
-                checkNameThread.join();
-                if(isPassCheck)
-                {
-                    ByteArrayOutputStream baos=new ByteArrayOutputStream();
-                    userAvatarBitmap.compress(Bitmap.CompressFormat.JPEG,50,baos);
-                    String avatar= Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
-                    String name=regUserName.getText().toString().trim();
-                    String password=getPasswordMD5(regPassword.getText().toString());
-                    Log.d("avatar",avatar);
-                    String path="http://tonywu10.imwork.net:16284/ACGWarehouse/UserRegDemo";
-                    sendUserData(path,name,password,avatar);
-                    sendMessage(mHandler,UPLOAD_FINISH);
-                }
-                else
-                {
-                    sendMessage(mHandler,SAME_NAME);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if(isPassCheck)
+            {
+                ByteArrayOutputStream baos=new ByteArrayOutputStream();
+                userAvatarBitmap.compress(Bitmap.CompressFormat.JPEG,50,baos);
+                String avatar= Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
+                String name = regUserName.getText().toString().trim();
+                Log.d("name",name);
+                String password=getPasswordMD5(regPassword.getText().toString());
+                Log.d("avatar",avatar);
+                String path="http://tonywu10.imwork.net:16284/ACGWarehouse/UserRegDemo?userName="+name;
+                Map<String, String> map = new HashMap<>();
+                map.put("userPassword",password);
+                map.put("userAvatar",avatar);
+                sendPostMessage(map,"UTF-8",path);
+                sendMessage(mHandler,UPLOAD_FINISH);
             }
         }
     }
@@ -298,16 +298,21 @@ public class RegisterActivity extends AppCompatActivity{
             checkName=getJsonData(path);
             try {
                 JSONArray jsonArray = new JSONArray(checkName);
+                Log.d("isPassCheck","ha");
                 for (int i=0;i<jsonArray.length();i++)
                 {
                     JSONObject jsonObject=jsonArray.getJSONObject(i);
                     if(jsonObject.getInt("exist")==1)
                     {
                         isPassCheck=false;
+                        sendMessage(mHandler,SAME_NAME);
+                        Log.d("isPassCheck","in");
                     }
                     else
                     {
+                        Log.d("isPassCheck","not");
                         isPassCheck=true;
+                        uploadToServer.start();
                     }
                 }
             } catch (JSONException e) {

@@ -7,23 +7,18 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.net.URLEncoder;
+import java.util.Map;
 
 public class HttpUtils {
     public HttpUtils() {
@@ -40,7 +35,7 @@ public class HttpUtils {
             int code = connection.getResponseCode();
             if (code == 200)
             {
-                return changeInputStream(connection.getInputStream());
+                return changeInputStream(connection.getInputStream(),"UTF-8");
             }
         } catch (Exception e)
         {
@@ -48,8 +43,8 @@ public class HttpUtils {
         }
         return "";
     }
-
-    private static String changeInputStream(InputStream inputStream)
+    //改变流输出方向
+    private static String changeInputStream(InputStream inputStream,String encode)
     {
         // TODO Auto-generated method stub
         String jsonString = "";
@@ -61,7 +56,7 @@ public class HttpUtils {
             {
                 outputStream.write(data, 0, len);
             }
-            jsonString = new String(outputStream.toByteArray());
+            jsonString = new String(outputStream.toByteArray(),encode);
         }
         catch (IOException e) {
             // TODO Auto-generated catch block
@@ -118,8 +113,7 @@ public class HttpUtils {
     public static String getJsonData(String path)
     {
         try {
-            URL url;
-            url=new URL(path);
+            URL url=new URL(path);
             HttpURLConnection urlConnection= (HttpURLConnection) url.openConnection();
             urlConnection.setDoInput(true);
             urlConnection.setDoOutput(true);
@@ -139,24 +133,54 @@ public class HttpUtils {
         }
         return "";
     }
-    //上传用户信息
-    public static void sendUserData(String path,String attr1,String attr2,String attr3)
-    {
-        ArrayList<NameValuePair> data=new ArrayList<>();
-        data.add(new BasicNameValuePair("userName",attr1));
-        data.add(new BasicNameValuePair("userPassword",attr2));
-        data.add(new BasicNameValuePair("userAvatar",attr3));
-        HttpClient client=new DefaultHttpClient();
-        HttpPost post=new HttpPost(path);
+    //通过Post上传数据
+    public static String sendPostMessage(Map<String, String> params, String encode,String path) {
+        StringBuilder stringBuilder = new StringBuilder();
+        URL url= null;
         try {
-            post.setEntity(new UrlEncodedFormEntity(data));
-            client.execute(post);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+            url = new URL(path);
+        } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+        if (params != null && !params.isEmpty()) {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                try {
+                    Log.d("key",entry.getKey());
+                    Log.d("value",entry.getValue());
+                    stringBuilder.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), encode)).append("&");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            try {
+                HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
+                urlConnection.setConnectTimeout(3000);
+                urlConnection.setRequestMethod("POST"); // 以post请求方式提交
+                urlConnection.setDoInput(true); // 读取数据
+                urlConnection.setDoOutput(true); // 向服务器写数据
+                // 获取上传信息的大小和长度
+                Log.d("stringBuilder",stringBuilder.toString());
+                byte[] myData = stringBuilder.toString().getBytes();
+                // 设置请求体的类型是文本类型,表示当前提交的是文本数据
+                urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                urlConnection.setRequestProperty("Content-Length", String.valueOf(myData.length));
+                // 获得输出流，向服务器输出内容
+                OutputStream outputStream = urlConnection.getOutputStream();
+                // 写入数据
+                outputStream.write(myData, 0, myData.length);
+                outputStream.close();
+                // 获得服务器响应结果和状态码
+                int responseCode = urlConnection.getResponseCode();
+                if (responseCode == 200) {
+                    // 取回响应的结果
+                    return changeInputStream(urlConnection.getInputStream(),encode);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return "";
     }
 }

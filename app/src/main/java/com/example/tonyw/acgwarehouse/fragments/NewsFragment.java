@@ -1,5 +1,6 @@
 package com.example.tonyw.acgwarehouse.fragments;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -39,6 +40,7 @@ import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
 public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     private boolean isLoadingMore = true;
     private NewsAdapter mNewsAdapter;
+    private ProgressDialog mProgressDialog;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private List<Entity> entityData=new ArrayList<>();
     private List<NewsEntity> mPreNewsEntities=new ArrayList<>();
@@ -81,6 +83,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
                 case LOAD_MORE_DATA:
+                    mProgressDialog.dismiss();
                     Log.d("mRefreshNewsEntitiesSize", String.valueOf(mRefreshNewsEntities.size()));
                     for (int i=0;i<mRefreshNewsEntities.size();i++)
                     {
@@ -112,6 +115,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mRecyclerView= (RecyclerView) view.findViewById(R.id.news_recyclerview);
         mRecyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
         mRecyclerView.setHasFixedSize(true);
+        mProgressDialog=new ProgressDialog(getActivity());
         mSwipeRefreshLayout= (SwipeRefreshLayout) view.findViewById(R.id.news_swipeRefresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.post(new Runnable() {
@@ -130,9 +134,12 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 super.onScrolled(recyclerView, dx, dy);
                 int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
                 int totalItemCount = linearLayoutManager.getItemCount();
-                if (lastVisibleItem >= totalItemCount - 4 && dy > 0) {
+                if (lastVisibleItem >= totalItemCount && dy > 0) {
                     if(isLoadingMore){
                         isLoadingMore = false;
+                        mProgressDialog.show();
+                        mProgressDialog.setMessage("加载中");
+                        mProgressDialog.setCanceledOnTouchOutside(false);
                         new Thread(new loadNewsInfo()).start();
                     }
                 }

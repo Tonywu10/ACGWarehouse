@@ -137,11 +137,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     mUserEntity.setUserName("");
                     mLoginButton.setImageResource(R.drawable.login);
                     mLoginButton.setClickable(true);
-                    Toast.makeText(getApplicationContext(),"已注销",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this,"已注销",Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
-                    Toast.makeText(getApplicationContext(),"不登录就想退出?",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this,"不登录就想退出?",Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
