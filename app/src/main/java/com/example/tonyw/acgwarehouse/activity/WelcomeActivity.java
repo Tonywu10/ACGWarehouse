@@ -1,8 +1,8 @@
 package com.example.tonyw.acgwarehouse.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
@@ -11,7 +11,7 @@ import android.widget.ImageView;
 
 import com.example.tonyw.acgwarehouse.R;
 
-public class WelcomeActivity extends AppCompatActivity{
+public class WelcomeActivity extends Activity {
     private ImageView welcomeView = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

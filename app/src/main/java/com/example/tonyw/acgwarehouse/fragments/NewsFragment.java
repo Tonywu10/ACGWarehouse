@@ -65,10 +65,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     break;
                 case IS_FINISH:
                     setDynamicPreView();
-                    Long startTime=System.currentTimeMillis();
-                    setEntitiesData(mPreNewsEntities,mDownloadNewsEntities,true);
-                    Long endTime=System.currentTimeMillis();
-                    Log.d("finish time", String.valueOf(endTime-startTime));
+                    setEntitiesData(mPreNewsEntities,mDownloadNewsEntities);
                     mNewsAdapter.notifyDataSetChanged();
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
@@ -193,8 +190,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             try {
                 List<Integer> randList;
                 String path="http://tonywu10.imwork.net:16284/ACGWarehouse/NewsLoadDemo?lastUrl="+mPreNewsEntities.get(mPreNewsEntities.size()-1).getNewsUrl();
-                JSONArray jsonArray;
-                jsonArray = new JSONArray(getJsonData(path));
+                JSONArray jsonArray = new JSONArray(getJsonData(path));
                 randList=getSequence(jsonArray);
                 mRefreshNewsEntities.clear();
                 setEntitiesDataFromJson(mRefreshNewsEntities,jsonArray,randList);
@@ -211,8 +207,7 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         @Override
         public void run() {
             String path="http://tonywu10.imwork.net:16284/ACGWarehouse/NewsDemo";
-            String jsonString;
-            jsonString= HttpUtils.getJsonContent(path);
+            String jsonString = HttpUtils.getJsonContent(path);
             try {
                 List<Integer> randList;
                 JSONArray jsonArray=new JSONArray(jsonString);
@@ -286,26 +281,16 @@ public class NewsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         return seqList;
     }
 
-    public void setEntitiesData(List<NewsEntity> mPreEntities,List<NewsEntity> mEntities,boolean isDownloadedData)
+    public void setEntitiesData(List<NewsEntity> mPreEntities,List<NewsEntity> mEntities)
     {
-        if(isDownloadedData) {
-            for (int i = 0; i < mPreEntities.size(); i++) {
-                mPreEntities.get(i).setNewsThumbBitmap(mEntities.get(i).getNewsThumbBitmap());
-                mPreEntities.get(i).setNewsTitle(mEntities.get(i).getNewsTitle());
-                mPreEntities.get(i).setNewsSource("动漫星空");
-                mPreEntities.get(i).setNewsDate(mEntities.get(i).getNewsDate());
-                mPreEntities.get(i).setNewsUrl(mEntities.get(i).getNewsUrl());
-            }
+        for (int i = 0; i < mPreEntities.size(); i++) {
+            mPreEntities.get(i).setNewsThumbBitmap(mEntities.get(i).getNewsThumbBitmap());
+            mPreEntities.get(i).setNewsTitle(mEntities.get(i).getNewsTitle());
+            mPreEntities.get(i).setNewsSource("动漫星空");
+            mPreEntities.get(i).setNewsDate(mEntities.get(i).getNewsDate());
+            mPreEntities.get(i).setNewsUrl(mEntities.get(i).getNewsUrl());
         }
-        else {
-            for (int i = 0; i < mEntities.size(); i++) {
-                mPreEntities.get(i).setNewsThumbBitmap(mEntities.get(i).getNewsThumbBitmap());
-                mPreEntities.get(i).setNewsTitle(mEntities.get(i).getNewsTitle());
-                mPreEntities.get(i).setNewsSource("动漫星空");
-                mPreEntities.get(i).setNewsDate(mEntities.get(i).getNewsDate());
-                mPreEntities.get(i).setNewsUrl(mEntities.get(i).getNewsUrl());
-            }
-        }
+
     }
 
     public void setEntitiesDataFromJson(List<NewsEntity> mEntities,JSONArray jsonArray,List<Integer> randList) throws JSONException {

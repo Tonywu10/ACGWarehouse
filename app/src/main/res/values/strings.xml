@@ -29,4 +29,5 @@
     <string name="playerName">Vitamio</string>
     <string name="searchResult">搜索结果</string>
     <string name="fileName">文件名</string>
+    <string name="more">更多</string>
 </resources>

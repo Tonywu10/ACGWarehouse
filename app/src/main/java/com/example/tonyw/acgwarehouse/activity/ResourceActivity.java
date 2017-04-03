@@ -27,18 +27,22 @@ import java.util.List;
 
 import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.DEFAULT_SPAN_COUNT;
 import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.IS_FINISH;
+import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.LOAD_MORE_DATA;
 import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.NO_DATA_GET;
 import static com.example.tonyw.acgwarehouse.utils.ConstantUtils.NO_NETWORK;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getHttpBitmap;
+import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getJsonData;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.isNetworkConnected;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
 
 public class ResourceActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
+    private boolean isLoadingMore = true;
     private List<Entity> entityData=new ArrayList<>();
     private ResourceAdapter mResourceAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private List<VideoEntity> mPreVideoEntities=new ArrayList<>();
     private List<VideoEntity> mDownloadVideoEntities=new ArrayList<>();
+    private List<VideoEntity> mLoadVideoEntities=new ArrayList<>();
     private JSONArray jsonArray=null;
     private Handler mHandler=new Handler()
     {
@@ -60,6 +64,17 @@ public class ResourceActivity extends AppCompatActivity implements SwipeRefreshL
                     Toast.makeText(getApplicationContext(),"无法获得数据，请刷新",Toast.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
+                case LOAD_MORE_DATA:
+                    Toast.makeText(getApplicationContext(),"载入新数据",Toast.LENGTH_SHORT).show();
+                    for (int i=0;i<mLoadVideoEntities.size();i++)
+                    {
+                        Log.d("entity",mLoadVideoEntities.get(i).getVideoTitle());
+                        mResourceAdapter.addItem(mLoadVideoEntities.get(i));
+                        mPreVideoEntities.add(mLoadVideoEntities.get(i));
+                    }
+                    isLoadingMore=true;
+                    mResourceAdapter.notifyDataSetChanged();
+                    break;
             }
         }
     };
@@ -69,7 +84,7 @@ public class ResourceActivity extends AppCompatActivity implements SwipeRefreshL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resource);
         RecyclerView mRecyclerView = (RecyclerView)findViewById(R.id.resource_recyclerview);
-        GridLayoutManager gridLayoutManager=new GridLayoutManager(getApplicationContext(),DEFAULT_SPAN_COUNT);
+        final GridLayoutManager gridLayoutManager=new GridLayoutManager(getApplicationContext(),DEFAULT_SPAN_COUNT);
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
         mRecyclerView.setHasFixedSize(true);
@@ -80,6 +95,21 @@ public class ResourceActivity extends AppCompatActivity implements SwipeRefreshL
             @Override
             public void run() {
                 mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int lastVisibleItem = gridLayoutManager.findLastVisibleItemPosition();
+                int totalItemCount = gridLayoutManager.getItemCount();
+                Log.d("滑动中","ing");
+                if (lastVisibleItem >= totalItemCount-10 && dy > 0) {
+                    if(isLoadingMore){
+                        isLoadingMore = false;
+                        new Thread(new loadVideoInfo()).start();
+                    }
+                }
             }
         });
         Toolbar mToolbar;
@@ -162,6 +192,28 @@ public class ResourceActivity extends AppCompatActivity implements SwipeRefreshL
             }
         }
     }
+
+    private class loadVideoInfo implements Runnable
+    {
+        @Override
+        public void run() {
+            try {
+                List<Integer> randList;
+                String path="http://tonywu10.imwork.net:16284/ACGWarehouse/VideoLoadDemo?lastVideo="+mPreVideoEntities.get(mPreVideoEntities.size()-1).getVideoUrl();
+                JSONArray jsonArray;
+                jsonArray = new JSONArray(getJsonData(path));
+                randList=getSequence(jsonArray);
+                mLoadVideoEntities.clear();
+                setEntitiesDataFromJson(mLoadVideoEntities,jsonArray,randList);
+                isLoadingMore=false;
+                sendMessage(mHandler,LOAD_MORE_DATA);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
     //将预先加载的Entities进行数据填充
     public void setEntitiesData(List<VideoEntity> mPreEntities, List<VideoEntity> mEntities)
     {
