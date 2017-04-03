@@ -56,11 +56,11 @@ public class SearchActivity extends AppCompatActivity{
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
                 case NO_NETWORK:
-                    Toast.makeText(getApplicationContext(),"network is down",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"网络出错",Toast.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
                 case NO_DATA_GET:
-                    Toast.makeText(getApplicationContext(),"no data,please refresh!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"无法获得数据，请刷新",Toast.LENGTH_SHORT).show();
                     mSwipeRefreshLayout.setRefreshing(false);
                     break;
                 case NO_RESULT:

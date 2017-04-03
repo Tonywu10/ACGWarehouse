@@ -13,14 +13,9 @@
         app:navigationIcon="@drawable/abc_ic_ab_back_mtrl_am_alpha"
         app:title="全部资源">
     </android.support.v7.widget.Toolbar>
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/resource_swipeRefresh"
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/resource_recyclerview">
+        android:layout_height="wrap_content"
+        android:id="@+id/resource_recyclerview">
     </android.support.v7.widget.RecyclerView>
-    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

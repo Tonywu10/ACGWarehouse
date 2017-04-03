@@ -1,9 +1,9 @@
 package com.example.tonyw.acgwarehouse.activity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,11 +35,11 @@ import static com.example.tonyw.acgwarehouse.utils.HttpUtils.getJsonData;
 import static com.example.tonyw.acgwarehouse.utils.HttpUtils.isNetworkConnected;
 import static com.example.tonyw.acgwarehouse.utils.MessageUtils.sendMessage;
 
-public class ResourceActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
+public class ResourceActivity extends AppCompatActivity{
     private boolean isLoadingMore = true;
     private List<Entity> entityData=new ArrayList<>();
     private ResourceAdapter mResourceAdapter;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private ProgressDialog mProgressDialog;
     private List<VideoEntity> mPreVideoEntities=new ArrayList<>();
     private List<VideoEntity> mDownloadVideoEntities=new ArrayList<>();
     private List<VideoEntity> mLoadVideoEntities=new ArrayList<>();
@@ -54,18 +54,15 @@ public class ResourceActivity extends AppCompatActivity implements SwipeRefreshL
                     setDynamicPreView(jsonArray);
                     setEntitiesData(mPreVideoEntities,mDownloadVideoEntities);
                     mResourceAdapter.notifyDataSetChanged();
-                    mSwipeRefreshLayout.setRefreshing(false);
                     break;
                 case NO_NETWORK:
                     Toast.makeText(getApplicationContext(),"网络出错",Toast.LENGTH_SHORT).show();
-                    mSwipeRefreshLayout.setRefreshing(false);
                     break;
                 case NO_DATA_GET:
                     Toast.makeText(getApplicationContext(),"无法获得数据，请刷新",Toast.LENGTH_SHORT).show();
-                    mSwipeRefreshLayout.setRefreshing(false);
                     break;
                 case LOAD_MORE_DATA:
-                    Toast.makeText(getApplicationContext(),"载入新数据",Toast.LENGTH_SHORT).show();
+                    mProgressDialog.dismiss();
                     for (int i=0;i<mLoadVideoEntities.size();i++)
                     {
                         Log.d("entity",mLoadVideoEntities.get(i).getVideoTitle());
@@ -84,29 +81,25 @@ public class ResourceActivity extends AppCompatActivity implements SwipeRefreshL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resource);
         RecyclerView mRecyclerView = (RecyclerView)findViewById(R.id.resource_recyclerview);
+        mProgressDialog=new ProgressDialog(this);
         final GridLayoutManager gridLayoutManager=new GridLayoutManager(getApplicationContext(),DEFAULT_SPAN_COUNT);
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
         mRecyclerView.setHasFixedSize(true);
         mResourceAdapter =new ResourceAdapter(entityData,DEFAULT_SPAN_COUNT,this);
         mRecyclerView.setAdapter(mResourceAdapter);
-        mSwipeRefreshLayout= (SwipeRefreshLayout) findViewById(R.id.resource_swipeRefresh);
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-            }
-        });
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 int lastVisibleItem = gridLayoutManager.findLastVisibleItemPosition();
                 int totalItemCount = gridLayoutManager.getItemCount();
-                Log.d("滑动中","ing");
-                if (lastVisibleItem >= totalItemCount-10 && dy > 0) {
+                if (lastVisibleItem >= totalItemCount-2 && dy > 0) {
                     if(isLoadingMore){
                         isLoadingMore = false;
+                        mProgressDialog.show();
+                        mProgressDialog.setMessage("加载中");
+                        mProgressDialog.setCanceledOnTouchOutside(false);
                         new Thread(new loadVideoInfo()).start();
                     }
                 }
@@ -123,7 +116,6 @@ public class ResourceActivity extends AppCompatActivity implements SwipeRefreshL
         });
         setDownloadData();
     }
-
 
     public void setDynamicPreView(JSONArray jsonArray)
     {
@@ -158,12 +150,6 @@ public class ResourceActivity extends AppCompatActivity implements SwipeRefreshL
         }
     }
 
-    @Override
-    public void onRefresh() {
-        Log.d("Refresh","Running");
-        mSwipeRefreshLayout.setRefreshing(false);
-    }
-
     //下载视频的相关数据
     private class downloadVideoInfo implements Runnable{
         @Override
@@ -193,6 +179,7 @@ public class ResourceActivity extends AppCompatActivity implements SwipeRefreshL
         }
     }
 
+    //加载更多视频数据
     private class loadVideoInfo implements Runnable
     {
         @Override
@@ -210,7 +197,6 @@ public class ResourceActivity extends AppCompatActivity implements SwipeRefreshL
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         }
     }
 
