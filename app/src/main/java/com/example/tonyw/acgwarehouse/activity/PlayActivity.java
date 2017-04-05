@@ -39,6 +39,7 @@ public class PlayActivity extends AppCompatActivity implements Runnable{
     private MyMediaController myMediaController;
     private String videoId="";
     private String result="";
+    private Bundle mBundle = new Bundle();
 
     private Handler mHandler = new Handler() {
         @Override
@@ -103,6 +104,7 @@ public class PlayActivity extends AppCompatActivity implements Runnable{
     protected void onDestroy() {
         super.onDestroy();
         try {
+            Log.d("-----------------------------------","onDestroy--------------------------------------");
             unregisterReceiver(batteryBroadcastReceiver);
         } catch (IllegalArgumentException ex) {
             ex.printStackTrace();
@@ -133,6 +135,11 @@ public class PlayActivity extends AppCompatActivity implements Runnable{
         while (true) {
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.CHINESE);
             String str = sdf.format(new Date());
+            Long playDuration = mVideoView.getCurrentPosition();
+            if(playDuration!=0){
+                mBundle.putLong("playDuration",playDuration);
+                Log.d("-----------------------------duration-----------------------------", String.valueOf(playDuration));
+            }
             Message msg = new Message();
             msg.obj = str;
             msg.what = TIME;
@@ -160,5 +167,18 @@ public class PlayActivity extends AppCompatActivity implements Runnable{
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("-----------------------------------","onStop--------------------------------------");
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Log.d("-----------------------------------","onResume--------------------------------------");
+        mVideoView.seekTo(mBundle.getLong("playDuration"));
     }
 }
